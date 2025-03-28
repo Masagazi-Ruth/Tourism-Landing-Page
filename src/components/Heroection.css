@@ -1,0 +1,82 @@
+/* HeroSection.css */
+.hero-section {
+  height: 100vh; /* Equivalent to h-screen */
+  display: flex;
+  flex-direction: column; /* Equivalent to flex-col */
+  align-items: center; /* Equivalent to items-center */
+  color: white; /* Equivalent to text-white */
+  position: relative; /* Equivalent to relative */
+  width: 100%; /* Equivalent to w-full */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-overlay {
+  position: absolute; /* Equivalent to absolute */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; /* Equivalent to inset-0 */
+  background-color: rgba(0, 0, 0, 0.4); /* Equivalent to bg-opacity-40 (assumes black background) */
+}
+
+.hero-content {
+  max-width: 1280px; /* Equivalent to container */
+  margin-left: auto;
+  margin-right: auto; /* Equivalent to mx-auto */
+  padding-left: 16px;
+  padding-right: 16px; /* Equivalent to px-4 */
+  position: relative; /* Equivalent to relative */
+  z-index: 10; /* Equivalent to z-10 */
+  flex: 1; /* Equivalent to flex-1 */
+  display: flex; /* Equivalent to flex */
+  align-items: center; /* Equivalent to items-center */
+}
+
+.hero-text {
+  /* Container for title and subtitle */
+}
+
+.hero-title {
+  font-size: 3rem; /* Equivalent to text-5xl */
+  font-weight: bold; /* Equivalent to font-bold */
+  color: white; /* Equivalent to text-white */
+}
+
+.hero-subtitle {
+  font-size: 1.25rem; /* Equivalent to text-xl */
+  color: white; /* Equivalent to text-white */
+  margin-top: 16px; /* Equivalent to mt-4 */
+}
+
+.hero-stats {
+  position: absolute; /* Equivalent to absolute */
+  bottom: 40px; /* Equivalent to bottom-10 */
+  left: 60px; /* Equivalent to left-15 (assuming 15 units in Tailwind’s 4px scale) */
+  z-index: 10; /* Equivalent to z-10 */
+  display: grid; /* Equivalent to grid */
+  grid-template-columns: repeat(4, 1fr); /* Equivalent to grid-cols-4 */
+  gap: 16px; /* Equivalent to gap-4 */
+}
+
+.hero-stat-item {
+  text-align: center; /* Equivalent to text-center */
+  color: white; /* Equivalent to text-white */
+}
+
+.hero-stat-icon {
+  font-size: 1.875rem; /* Equivalent to text-3xl */
+  margin-bottom: 8px; /* Equivalent to mb-2 */
+  margin-left: auto;
+  margin-right: auto; /* Equivalent to mx-auto */
+}
+
+.hero-stat-value {
+  font-size: 1.5rem; /* Equivalent to text-2xl */
+  font-weight: bold; /* Equivalent to font-bold */
+}
+
+.hero-stat-label {
+  font-size: 0.875rem; /* Equivalent to text-sm */
+}

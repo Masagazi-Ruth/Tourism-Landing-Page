@@ -11,7 +11,7 @@ const VideoCard = ({ videoId, title, downloadUrl, shareUrl }) => {
   };
 
   return (
-    <div className="rounded-lg overflow-hidden shadow-md bg-white">
+    <div className="rounded-lg overflow-hidden  p-2 w-75 shadow-md bg-white">
       {/* YouTube Video Player */}
       <div className="relative" style={{ paddingBottom: '56.25%' /* 16:9 aspect ratio */ }}>
         <iframe
@@ -26,9 +26,6 @@ const VideoCard = ({ videoId, title, downloadUrl, shareUrl }) => {
       {/* Video Title, Note, and Buttons */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-        <p className="text-sm text-gray-500 mb-2">
-          Tap the video to access full-screen mode.
-        </p>
         <div className="flex space-x-3">
           {/* Download Button (Conditionally Rendered) */}
           {downloadUrl && downloadUrl !== '#' ? (

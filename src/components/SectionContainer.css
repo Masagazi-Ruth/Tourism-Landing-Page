@@ -1,0 +1,45 @@
+/* SectionContainer.css */
+.section-container {
+  padding: 48px 16px;
+}
+
+.section-container-bg {
+  background-color: #f3f4f6; /* Equivalent to bg-gray-100 */
+}
+
+.section-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1f2937; /* Equivalent to text-gray-800 */
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: #4b5563; /* Equivalent to text-gray-600 */
+  margin-bottom: 32px;
+}
+
+.section-grid {
+  display: grid;
+  gap: 32px;
+}
+
+.section-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.section-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.section-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 768px) {
+  .section-grid-3,
+  .section-grid-4,
+  .section-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
