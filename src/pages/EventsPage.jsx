@@ -1,20 +1,36 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import IMAGES from '../assets/images/image'; // Adjust path if needed
+import { useNavigate } from 'react-router-dom';
+import IMAGES from '../assets/images/image';
 
 const Events = () => {
-  // Event data based on the screenshot
+  const navigate = useNavigate();
+
   const eventsData = [
     {
       id: 1,
       title: "Whole of South Africa",
       price: "3,360",
       duration: "10 Days/9 Nights",
-      image:"https://img.freepik.com/free-photo/beautiful-shot-three-zebras-crossing-road-safari-with-trees_181624-30309.jpg",
+      image: "https://img.freepik.com/free-photo/beautiful-shot-three-zebras-crossing-road-safari-with-trees_181624-30309.jpg",
       carouselImages: [
         "https://via.placeholder.com/300x200?text=South+Africa+1",
         "https://via.placeholder.com/300x200?text=South+Africa+2",
         "https://via.placeholder.com/300x200?text=South+Africa+3",
+      ],
+      description: "Explore the diverse landscapes and cultures of South Africa.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1: Arrive in Johannesburg.\nDay 2: Explore Soweto.\nDay 3-5: Safari in Kruger National Park.\nDay 6-7: Cape Town city tour.\nDay 8: Wine tasting in Stellenbosch.\nDay 9: Table Mountain hike.\nDay 10: Depart.",
+          image: "https://via.placeholder.com/600x400?text=South+Africa+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "Luxury lodges in Kruger and boutique hotels in Cape Town.",
+          image: "https://via.placeholder.com/600x400?text=South+Africa+Accommodation",
+        },
       ],
     },
     {
@@ -28,6 +44,20 @@ const Events = () => {
         "https://via.placeholder.com/300x200?text=Mauritius+2",
         "https://via.placeholder.com/300x200?text=Mauritius+3",
       ],
+      description: "Combine South Africa’s wildlife with Mauritius’ beaches.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1-5: South Africa (Cape Town, Kruger).\nDay 6-13: Mauritius beach resort.\nDay 14: Depart.",
+          image: "https://via.placeholder.com/600x400?text=Mauritius+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "5-star resorts in Mauritius and safari lodges in South Africa.",
+          image: "https://via.placeholder.com/600x400?text=Mauritius+Accommodation",
+        },
+      ],
     },
     {
       id: 3,
@@ -39,6 +69,20 @@ const Events = () => {
         "https://via.placeholder.com/300x200?text=Splendid+1",
         "https://via.placeholder.com/300x200?text=Splendid+2",
         "https://via.placeholder.com/300x200?text=Splendid+3",
+      ],
+      description: "A compact journey through South Africa’s highlights.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
+          image: "https://via.placeholder.com/600x400?text=Splendid+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "Comfortable hotels and lodges.",
+          image: "https://via.placeholder.com/600x400?text=Splendid+Accommodation",
+        },
       ],
     },
     {
@@ -52,6 +96,20 @@ const Events = () => {
         "https://via.placeholder.com/300x200?text=Jambo+2",
         "https://via.placeholder.com/300x200?text=Jambo+3",
       ],
+      description: "Experience the vibrant wildlife of Kenya and Tanzania.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1-3: Nairobi.\nDay 4-6: Masai Mara.\nDay 7-9: Serengeti.\nDay 10: Depart.",
+          image: "https://via.placeholder.com/600x400?text=Jambo+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "Tented camps and lodges.",
+          image: "https://via.placeholder.com/600x400?text=Jambo+Accommodation",
+        },
+      ],
     },
     {
       id: 5,
@@ -63,6 +121,20 @@ const Events = () => {
         "https://via.placeholder.com/300x200?text=Kruger+1",
         "https://via.placeholder.com/300x200?text=Kruger+2",
         "https://via.placeholder.com/300x200?text=Kruger+3",
+      ],
+      description: "A private safari experience with luxury touches.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1-4: Cape Town.\nDay 5-10: Kruger private safari.\nDay 11-13: Stellenbosch.\nDay 14: Depart.",
+          image: "https://via.placeholder.com/600x400?text=Kruger+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "Private lodges and 5-star hotels.",
+          image: "https://via.placeholder.com/600x400?text=Kruger+Accommodation",
+        },
       ],
     },
     {
@@ -76,27 +148,37 @@ const Events = () => {
         "https://via.placeholder.com/300x200?text=Splendid+2-2",
         "https://via.placeholder.com/300x200?text=Splendid+2-3",
       ],
+      description: "Another splendid journey through South Africa.",
+      sections: [
+        {
+          title: "Itinerary",
+          description:
+            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
+          image: "https://via.placeholder.com/600x400?text=Splendid+2+Itinerary",
+        },
+        {
+          title: "Accommodation",
+          description: "Comfortable hotels and lodges.",
+          image: "https://via.placeholder.com/600x400?text=Splendid+2+Accommodation",
+        },
+      ],
     },
   ];
 
-  // State for search and pagination
   const [searchQuery, setSearchQuery] = useState('');
-  const [visibleEvents, setVisibleEvents] = useState(6); // Initially show 6 events
+  const [visibleEvents, setVisibleEvents] = useState(6);
 
-  // Filter events based on search query
   const filteredEvents = eventsData.filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setVisibleEvents(6); // Reset pagination when searching
+    setVisibleEvents(6);
   };
 
-  // Handle "Load More" button click
   const handleLoadMore = () => {
-    setVisibleEvents((prev) => prev + 6); // Load 6 more events
+    setVisibleEvents((prev) => prev + 6);
   };
 
   return (
@@ -152,16 +234,15 @@ const Events = () => {
             {filteredEvents.slice(0, visibleEvents).map((event) => (
               <div
                 key={event.id}
-                className={clsx("bg-white rounded-lg shadow-md overflow-hidden")}
+                className={clsx("bg-white rounded-lg shadow-md overflow-hidden cursor-pointer")}
+                onClick={() => navigate(`/events/${event.id}`)}
               >
-                {/* Event Image with Carousel Dots */}
                 <div className={clsx("relative")}>
                   <img
                     src={event.image}
                     alt={event.title}
                     className={clsx("w-full h-48 object-cover")}
                   />
-                  {/* Carousel Dots */}
                   <div className={clsx("absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2")}>
                     {event.carouselImages.map((_, index) => (
                       <span
@@ -174,7 +255,6 @@ const Events = () => {
                     ))}
                   </div>
                 </div>
-                {/* Event Details */}
                 <div className={clsx("p-4")}>
                   <h3 className={clsx("text-lg font-bold text-gray-800 mb-2")}>
                     {event.title}

@@ -10,12 +10,12 @@ const Footer = () => {
     <footer
       className={clsx(
         "footer",
-        "bg-pink-50 py-8 px-4"
+        "bg-pink-50 py-8 px-4 min-h-[200px]"
       )}
     >
       <div
         className={clsx(
-          "max-w-6xl mx-auto",
+          "max-w-7xl mx-auto",
           "flex flex-col md:flex-row justify-between items-center gap-6"
         )}
       >
@@ -28,7 +28,7 @@ const Footer = () => {
         <nav
           className={clsx(
             "footer-nav",
-            "flex flex-wrap gap-6 text-gray-600"
+            "flex flex-wrap gap-6 text-left text-gray-600"
           )}
         >
           <Link to="/" className={clsx("hover:text-gray-800")}>Home</Link>
@@ -36,6 +36,10 @@ const Footer = () => {
           <Link to="/teams" className={clsx("hover:text-gray-800")}>Teams</Link>
           <Link to="/about" className={clsx("hover:text-gray-800")}>About</Link>
           <Link to="/contact" className={clsx("hover:text-gray-800")}>Contact</Link>
+          <Link to="/privacypolicy" className={clsx("hover:text-gray-800")}>PrivacyPolicy</Link>
+          <Link  to="/termsandconditions" className={clsx("hover:text-gray-800")}>TermsAndConditions</Link>
+                          
+          
         </nav>
         </div>
       {/* Subscribe Section */}
@@ -68,7 +72,7 @@ const Footer = () => {
       <div
         className={clsx(
           "footer-socials",
-          "pr-8 md:pr-14 flex gap-4"
+          "pr-8 md:pr-14 flex gap-4 mt-8"
         )}
       >
         <div

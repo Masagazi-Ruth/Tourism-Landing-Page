@@ -1,53 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from './HeroSection';
 import SectionContainer from './SectionContainer';
 import TripCard from './TripCard';
 import VideoCard from './VideoCard';
-import TestimonialCard from './TestimonialCard';
 import '../App.css';
 import { FaStar } from 'react-icons/fa';
 import IMAGES from '../assets/images/image'; // Correct path to images.jsx
 
 const Body = () => {
-  // Data for your sections
+  const navigate = useNavigate();
+
   const heroData = {
     title: "Experience Nature",
     subtitle: "India's Largest Trekking Organization",
     backgroundImage: IMAGES.Heros,
   };
-
   const highlightedEvents = [
-    { id: 1, title: "Kilimanjaro", image: IMAGES.Kilimanjaro },
-    { id: 2, title: "Madagascar", image: IMAGES.Madagascar },
-    { id: 3, title: "Cape Town", image: IMAGES.CapeTown },
+    { id: "he1", title: "Kilimanjaro", image: IMAGES.Kilimanjaro },
+    { id: "he2", title: "Madagascar", image: IMAGES.Madagascar },
+    { id: "he3", title: "Cape Town", image: IMAGES.CapeTown },
   ];
-
   const snowTreks = [
-    { id: 1, title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek },
-    { id: 2, title: "Mount Kenya Trek", image: IMAGES.MountKenyaTrek, badges: ["Mount Kenya Trek"] },
-    { id: 3, title: "Rwenzori Trek", image: IMAGES.RwenzoriTrek, badges: ["Rwenzori Trek"] },
-    { id: 4, title: "Atlas Trek", image: IMAGES.AtlasTrek, badges: ["Atlas Trek"] },
+    { id: "st1", title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek },
+    { id: "st2", title: "Mount Kenya Trek", image: IMAGES.MountKenyaTrek, badges: ["Mount Kenya Trek"] },
+    { id: "st3", title: "Rwenzori Trek", image: IMAGES.RwenzoriTrek, badges: ["Rwenzori Trek"] },
+    { id: "st4", title: "Atlas Trek", image: IMAGES.AtlasTrek, badges: ["Atlas Trek"] },
   ];
-
   const summerEvents = [
-    { id: 1, title: "Kruger Park", image: IMAGES.KrugerPark },
-    { id: 2, title: "Western Cape", image: IMAGES.WesternCape },
-    { id: 3, title: "Addo Park", image: IMAGES.AddoPark },
-    { id: 4, title: "Masai Mara", image: IMAGES.MasaiMara },
+    { id: "se1", title: "Kruger Park", image: IMAGES.KrugerPark },
+    { id: "se2", title: "Western Cape", image: IMAGES.WesternCape },
+    { id: "se3", title: "Addo Park", image: IMAGES.AddoPark },
+    { id: "se4", title: "Masai Mara", image: IMAGES.MasaiMara },
   ];
-
   const epicAdventures = [
-    { id: 1, title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek, badges: ["Extreme", "Guide Required"] },
-    { id: 2, title: "Hwange Park", image: IMAGES.HwangePark },
-    { id: 3, title: "Botswana", image: IMAGES.Botswana },
+    { id: "ea1", title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek, badges: ["Extreme", "Guide Required"] },
+    { id: "ea2", title: "Hwange Park", image: IMAGES.HwangePark },
+    { id: "ea3", title: "Botswana", image: IMAGES.Botswana },
   ];
-
   const specialEvents = [
-    { id: 1, title: "Hunting", image: IMAGES.Hunting, badges: ["Popular", "Challenging"] },
-    { id: 2, title: "Training Camp", image: IMAGES.TrainingCamp, badges: ["Exotic", "Wildlife"] },
+    { id: "sp1", title: "Hunting", image: IMAGES.Hunting, badges: ["Popular", "Challenging"] },
+    { id: "sp2", title: "Training Camp", image: IMAGES.TrainingCamp, badges: ["Exotic", "Wildlife"] },
   ];
-
+  
   const exclusiveFootage = [
     {
       id: 1,
@@ -159,6 +155,7 @@ const Body = () => {
             title={event.title}
             badges={event.badges}
             variant="default"
+            onClick={() => navigate(`/events/${event.id}`)}
           />
         ))}
       </SectionContainer>
@@ -179,6 +176,7 @@ const Body = () => {
             image={trek.image}
             title={trek.title}
             variant="default"
+            onClick={() => navigate(`/events/${trek.id}`)}
           />
         ))}
       </SectionContainer>
@@ -198,6 +196,7 @@ const Body = () => {
             image={event.image}
             title={event.title}
             variant="default"
+            onClick={() => navigate(`/events/${event.id}`)}
           />
         ))}
       </SectionContainer>
@@ -219,6 +218,10 @@ const Body = () => {
             title={adventure.title}
             badges={adventure.badges}
             variant="large"
+            onClick={() => {
+              console.log('Navigating to:', `/events/${adventure.id}`);
+              navigate(`/events/${adventure.id}`);
+            }}
           />
         ))}
       </SectionContainer>
@@ -239,6 +242,7 @@ const Body = () => {
             title={event.title}
             badges={event.badges}
             variant="default"
+            onClick={() => navigate(`/events/${event.id}`)}
           />
         ))}
       </SectionContainer>

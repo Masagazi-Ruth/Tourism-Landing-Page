@@ -1,43 +1,84 @@
-// File: src/components/TripCard.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import clsx from 'clsx';
 
-function TripCard({ 
-  image, 
-  title, 
-  badges = [], 
-  variant = "default", 
-  onClick 
-}) {
-  const cardStyles = {
-    default: "rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow",
-    large: "rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow",
-    overlay: "rounded-lg overflow-hidden relative"
-  };
+const TripCard = ({
+  image,
+  title,
+  badges = [],
+  variant = "default",
+  onClick,
+  hoverEffect = "none"
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
 
   return (
-    <div className={cardStyles[variant]} onClick={onClick}>
-      <div className="relative">
-        <img src={image} alt={title} className="w-full h-48 object-cover" />
-        {variant === "overlay" && (
-          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-            <h3 className="text-white text-2xl font-bold">{title}</h3>
-          </div>
-        )}
-      </div>
-      {variant !== "overlay" && (
-        <div className="p-4 bg-white">
-          <h3 className="font-bold text-lg text-black">{title}</h3>
-          <div className="flex mt-2 space-x-2">
+    <div
+      className={clsx(
+        "rounded-lg overflow-hidden cursor-pointer bg-white shadow-md",
+        "transition-all duration-300",
+        variant === "large" && "h-80",
+        variant === "default" && "h-64",
+        hoverEffect === "netflix" && isHovered && "transform scale-110 z-10 shadow-xl"
+      )}
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+      }}
+    >
+      <div className={clsx("relative h-full")}>
+        <img
+          src={image}
+          alt={title}
+          className={clsx(
+            "w-full h-full object-cover",
+            hoverEffect === "netflix" && isHovered && "brightness-75"
+          )}
+        />
+        
+        {badges.length > 0 && (
+          <div className={clsx("absolute top-2 left-2 flex flex-wrap gap-1")}>
             {badges.map((badge, index) => (
-              <span key={index} className="text-xs bg-gray-600 text-white px-2 py-1 rounded">
+              <span
+                key={index}
+                className={clsx(
+                  "px-2 py-1 text-xs font-bold rounded",
+                  "bg-orange-500 text-white"
+                )}
+              >
                 {badge}
               </span>
             ))}
           </div>
+        )}
+        
+        <div
+          className={clsx(
+            "absolute bottom-0 left-0 right-0 p-4",
+            "bg-gradient-to-t from-black to-transparent",
+            hoverEffect === "netflix" && isHovered && "pb-8 from-black to-black/50"
+          )}
+        >
+          <h3 className={clsx("text-white font-bold text-xl")}>{title}</h3>
+          
+          {hoverEffect === "netflix" && isHovered && (
+            <div className={clsx("mt-2 flex gap-2 opacity-100 transition-opacity")}>
+              <button className={clsx("px-3 py-1 bg-white text-black rounded text-sm font-bold")}>
+                Details
+              </button>
+              <button className={clsx("px-3 py-1 bg-orange-500 text-white rounded text-sm font-bold")}>
+                Book Now
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
 
 export default TripCard;

@@ -1,4 +1,4 @@
-import { FaHome, FaCalendarAlt, FaUsers, FaInfoCircle, FaEnvelope, FaHandsHelping, FaClock } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaUsers, FaInfoCircle, FaEnvelope, FaHandsHelping, FaClock, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 
 export const navItems = [
   { name: "Home", icon: <FaHome />, link: "/" },
@@ -6,6 +6,9 @@ export const navItems = [
   { name: "Teams", icon: <FaUsers />, link: "/teams" },
   { name: "About", icon: <FaInfoCircle />, link: "/about" },
   { name: "Contact", icon: <FaEnvelope />, link: "/contact" },
+  // { name: "Profile", icon: <FaUserCircle />, link: "/profile" },
+  // // { name: "Logout", icon: <FaSignOutAlt />, link: "/logout" },
+  // // {name: "Login", icon: <FaSignInAlt />, link: "/login" },
 ];
 
 export const navIcons = {
@@ -17,4 +20,6 @@ export const navIcons = {
   Participants: FaUsers,
   Volunteers: FaHandsHelping,
   Years: FaClock,
+  Profile: FaUserCircle,
+  Logout: FaSignOutAlt
 };

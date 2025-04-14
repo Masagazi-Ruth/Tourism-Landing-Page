@@ -1,114 +1,113 @@
-/* Header.css */
 .header {
-  position: fixed; /* Equivalent to fixed */
-  top: 0; /* Equivalent to top-0 */
-  left: 0; /* Equivalent to left-0 */
-  width: 100%; /* Equivalent to w-full */
-  z-index: 50; /* Equivalent to z-50 */
-  background-color: transparent; /* Equivalent to bg-transparent */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  transition: background-color 0.3s ease; /* Smooth transition for bg color */
 }
 
 .header-nav {
-  display: flex; /* Equivalent to flex */
-  justify-content: space-between; /* Equivalent to justify-between */
-  align-items: center; /* Equivalent to items-center */
-  padding-left: 40px; /* Equivalent to px-10 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 40px;
   padding-right: 40px;
-  padding-top: 16px; /* Equivalent to py-4 */
+  padding-top: 16px;
   padding-bottom: 16px;
-  color: white; /* Equivalent to text-white */
-  width: 100%; /* Equivalent to w-full */
-  top: 0; /* Equivalent to top-0 */
-  z-index: 50; /* Equivalent to z-50 */
+  color: white;
+  width: 100%;
+  top: 0;
+  z-index: 50;
 }
 
 .header-logo {
-  font-size: 1.5rem; /* Equivalent to text-2xl */
-  font-weight: bold; /* Equivalent to font-bold */
-  color: white; /* Equivalent to text-white */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
 }
 
 .header-menu {
-  display: none; /* Equivalent to hidden */
-  gap: 24px; /* Equivalent to space-x-6 */
+  display: none;
+  gap: 24px;
 }
 
 @media (min-width: 768px) {
   .header-menu {
-    display: flex; /* Equivalent to md:flex */
+    display: flex;
   }
 }
 
 .header-menu-item {
-  cursor: pointer; /* Equivalent to cursor-pointer */
+  cursor: pointer;
 }
 
 .header-menu-item:hover {
-  color: #93c5fd; /* Equivalent to hover:text-blue-300 */
+  color: #93c5fd;
 }
 
 .header-menu-link {
-  display: flex; /* Equivalent to flex */
-  align-items: center; /* Equivalent to items-center */
-  gap: 8px; /* Equivalent to gap-2 */
-  color: white; /* Equivalent to text-white */
-  text-decoration: none; /* Ensure no underline on links */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
 }
 
 .header-hamburger {
-  display: block; /* Visible by default */
+  display: block;
 }
 
 @media (min-width: 768px) {
   .header-hamburger {
-    display: none; /* Equivalent to md:hidden */
+    display: none;
   }
 }
 
 .header-hamburger-button {
-  color: white; /* Equivalent to text-white */
+  color: white;
 }
 
 .header-hamburger-button:focus {
-  outline: none; /* Equivalent to focus:outline-none */
+  outline: none;
 }
 
 .header-mobile-menu {
-  display: block; /* Visible by default */
-  position: absolute; /* Equivalent to absolute */
-  top: 100%; /* Equivalent to top-full */
-  left: 0; /* Equivalent to left-0 */
-  width: 100%; /* Equivalent to w-full */
-  background-color: rgba(0, 0, 0, 0.9); /* Equivalent to bg-black bg-opacity-90 */
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 @media (min-width: 768px) {
   .header-mobile-menu {
-    display: none; /* Equivalent to md:hidden */
+    display: none;
   }
 }
 
 .header-mobile-menu-list {
-  display: flex; /* Equivalent to flex */
-  flex-direction: column; /* Equivalent to flex-col */
-  align-items: center; /* Equivalent to items-center */
-  gap: 16px; /* Equivalent to space-y-4 */
-  padding-top: 24px; /* Equivalent to py-6 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 24px;
   padding-bottom: 24px;
 }
 
 .header-mobile-menu-item {
-  cursor: pointer; /* Equivalent to cursor-pointer */
+  cursor: pointer;
 }
 
 .header-mobile-menu-item:hover {
-  color: #93c5fd; /* Equivalent to hover:text-blue-300 */
+  color: #93c5fd;
 }
 
 .header-mobile-menu-link {
-  display: flex; /* Equivalent to flex */
-  align-items: center; /* Equivalent to items-center */
-  gap: 8px; /* Equivalent to gap-2 */
-  color: white; /* Equivalent to text-white */
-  text-decoration: none; /* Ensure no underline on links */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
 }
