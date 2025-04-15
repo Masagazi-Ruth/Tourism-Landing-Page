@@ -1,175 +1,94 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import { useNavigate } from 'react-router-dom';
-import IMAGES from '../assets/images/image';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Events = () => {
-  const navigate = useNavigate();
-
-  const eventsData = [
-    {
-      id: 1,
-      title: "Whole of South Africa",
-      price: "3,360",
-      duration: "10 Days/9 Nights",
-      image: "https://img.freepik.com/free-photo/beautiful-shot-three-zebras-crossing-road-safari-with-trees_181624-30309.jpg",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=South+Africa+1",
-        "https://via.placeholder.com/300x200?text=South+Africa+2",
-        "https://via.placeholder.com/300x200?text=South+Africa+3",
-      ],
-      description: "Explore the diverse landscapes and cultures of South Africa.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1: Arrive in Johannesburg.\nDay 2: Explore Soweto.\nDay 3-5: Safari in Kruger National Park.\nDay 6-7: Cape Town city tour.\nDay 8: Wine tasting in Stellenbosch.\nDay 9: Table Mountain hike.\nDay 10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Luxury lodges in Kruger and boutique hotels in Cape Town.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "South Africa with Mauritius",
-      price: "4,000",
-      duration: "13 Days/14 Nights",
-      image: "https://img.freepik.com/free-photo/view-quiver-trees-forest-with-beautiful-sky-sunset-twilight-sky-scene-keetmanshoop-namibia_1150-21603.jpg",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=Mauritius+1",
-        "https://via.placeholder.com/300x200?text=Mauritius+2",
-        "https://via.placeholder.com/300x200?text=Mauritius+3",
-      ],
-      description: "Combine South Africa’s wildlife with Mauritius’ beaches.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-5: South Africa (Cape Town, Kruger).\nDay 6-13: Mauritius beach resort.\nDay 14: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Mauritius+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "5-star resorts in Mauritius and safari lodges in South Africa.",
-          image: "https://via.placeholder.com/600x400?text=Mauritius+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Splendid South Africa",
-      price: "2,560",
-      duration: "8 Days/10 Nights",
-      image: "https://img.freepik.com/free-photo/grassy-field-with-trees-giraffes-walking-around-with-light-blue-sky-background_181624-3477.jpg",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=Splendid+1",
-        "https://via.placeholder.com/300x200?text=Splendid+2",
-        "https://via.placeholder.com/300x200?text=Splendid+3",
-      ],
-      description: "A compact journey through South Africa’s highlights.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Comfortable hotels and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 4,
-      title: "African Jambo",
-      price: "3,360",
-      duration: "10 Days/9 Nights",
-      image: "https://img.freepik.com/free-photo/savannah-landscape-national-park-kenya-africa_167946-107.jpg",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=Jambo+1",
-        "https://via.placeholder.com/300x200?text=Jambo+2",
-        "https://via.placeholder.com/300x200?text=Jambo+3",
-      ],
-      description: "Experience the vibrant wildlife of Kenya and Tanzania.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Nairobi.\nDay 4-6: Masai Mara.\nDay 7-9: Serengeti.\nDay 10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Jambo+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Tented camps and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Jambo+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: "Glimpse of South Africa with Kruger - Private Tour",
-      price: "4,050",
-      duration: "13 Days/14 Nights",
-      image: IMAGES.WesternCape || "https://via.placeholder.com/300x200?text=Kruger+Tour",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=Kruger+1",
-        "https://via.placeholder.com/300x200?text=Kruger+2",
-        "https://via.placeholder.com/300x200?text=Kruger+3",
-      ],
-      description: "A private safari experience with luxury touches.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-4: Cape Town.\nDay 5-10: Kruger private safari.\nDay 11-13: Stellenbosch.\nDay 14: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Kruger+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Private lodges and 5-star hotels.",
-          image: "https://via.placeholder.com/600x400?text=Kruger+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 6,
-      title: "Splendid South Africa",
-      price: "2,560",
-      duration: "8 Days/10 Nights",
-      image: IMAGES.MasaiMara || "https://via.placeholder.com/300x200?text=Splendid+South+Africa+2",
-      carouselImages: [
-        "https://via.placeholder.com/300x200?text=Splendid+2-1",
-        "https://via.placeholder.com/300x200?text=Splendid+2-2",
-        "https://via.placeholder.com/300x200?text=Splendid+2-3",
-      ],
-      description: "Another splendid journey through South Africa.",
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+2+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Comfortable hotels and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+2+Accommodation",
-        },
-      ],
-    },
-  ];
-
+  const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [visibleEvents, setVisibleEvents] = useState(6);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [eventCategories, setEventCategories] = useState([]);
 
-  const filteredEvents = eventsData.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // Map of category names to their API endpoints
+  const categoryEndpoints = {
+    all: 'all-events',
+    SnowTreks: 'snow-trek-events',
+    SummerEvents: 'summer-events',
+    MonsoonEvents: 'monsoon-events',
+    EpicAdventures: 'epic-adventure-events',
+    SpecialEvents: 'special-events'
+  };
+
+  const fetchEvents = async (category = 'all') => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Get the appropriate endpoint for the selected category
+      const endpoint = categoryEndpoints[category] || 'all-events';
+      const apiUrl = `http://54.210.95.246:3005/api/v1/events/${endpoint}`;
+      
+      console.log(`Fetching from: ${apiUrl}`);
+      const response = await axios.get(apiUrl);
+      console.log('API Response:', response.data);
+      
+      // Handle different response structures based on category
+      if (category === 'all' && response.data && typeof response.data === 'object') {
+        // For 'all-events', we get an object with category arrays
+        const categories = Object.keys(response.data);
+        setEventCategories(categories);
+        
+        // Flatten all event arrays from different categories
+        const allEvents = categories.reduce((acc, cat) => {
+          const eventsWithCategory = response.data[cat].map(event => ({
+            ...event,
+            category: cat
+          }));
+          return [...acc, ...eventsWithCategory];
+        }, []);
+        
+        setEvents(allEvents);
+      } else if (Array.isArray(response.data)) {
+        // For category-specific endpoints, we get an array directly
+        const eventsWithCategory = response.data.map(event => ({
+          ...event,
+          category: category
+        }));
+        setEvents(eventsWithCategory);
+      } else if (response.data && response.data[category] && Array.isArray(response.data[category])) {
+        // Some APIs might return an object with a single category key
+        const eventsWithCategory = response.data[category].map(event => ({
+          ...event,
+          category: category
+        }));
+        setEvents(eventsWithCategory);
+      } else {
+        setEvents([]);
+      }
+    } catch (err) {
+      setError(`Failed to load ${category} events. Please try again later.`);
+      console.error('Fetch Error:', err.message, err.response);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial data load
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  // Fetch new data when category changes
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchEvents(selectedCategory);
+    }
+  }, [selectedCategory]);
+
+  // Title-based filtering within the current category
+  const filteredEvents = events.filter((event) =>
+    event?.heading?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSearchChange = (e) => {
@@ -177,39 +96,54 @@ const Events = () => {
     setVisibleEvents(6);
   };
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSearchQuery('');
+    setVisibleEvents(6);
+  };
+
   const handleLoadMore = () => {
     setVisibleEvents((prev) => prev + 6);
   };
 
+  const handleEventClick = (eventId) => {
+    window.location.href = `/events/${eventId}`;
+  };
+
+  // Helper function to format category names for display
+  const formatCategoryName = (category) => {
+    return category.replace(/([A-Z])/g, ' $1').trim();
+  };
+
+  // Helper function to truncate text
+  const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
+
   return (
-    <div className={clsx("min-h-screen flex flex-col")}>
+    <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className={clsx("bg-orange-500 py-16 text-white")}>
-        <div className={clsx("max-w-6xl mx-auto px-4")}>
-          <h1 className={clsx("text-4xl font-bold mb-2")}>Events</h1>
-          <p className={clsx("text-xl mb-8")}>
+      <section className="bg-orange-500 py-16 text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-2">Adventures & Expeditions</h1>
+          <p className="text-xl mb-8">
             Life is either a daring adventure or nothing.
           </p>
-          <div className={clsx("flex justify-end")}>
+          <div className="flex justify-end">
             <input
               type="text"
               placeholder="Search Here"
               value={searchQuery}
               onChange={handleSearchChange}
-              className={clsx(
-                "px-4 py-2 rounded-l-md border border-gray-300 bg-white text-gray-800",
-                "focus:outline-none focus:ring-2 focus:ring-gray-400",
-                "w-full max-w-xs"
-              )}
+              className="px-4 py-2 rounded-l-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 w-full max-w-xs"
             />
             <button
-              className={clsx(
-                "px-4 py-2 bg-gray-200 rounded-r-md",
-                "hover:bg-gray-300 transition"
-              )}
+              className="px-4 py-2 bg-gray-200 rounded-r-md hover:bg-gray-300 transition"
+              aria-label="Search"
             >
               <svg
-                className={clsx("w-5 h-5 text-gray-600")}
+                className="w-5 h-5 text-gray-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -227,78 +161,151 @@ const Events = () => {
         </div>
       </section>
 
-      {/* Events Grid */}
-      <section className={clsx("flex-grow py-10 bg-white")}>
-        <div className={clsx("max-w-6xl mx-auto px-4")}>
-          <div className={clsx("grid grid-cols-1 md:grid-cols-3 gap-6")}>
-            {filteredEvents.slice(0, visibleEvents).map((event) => (
-              <div
-                key={event.id}
-                className={clsx("bg-white rounded-lg shadow-md overflow-hidden cursor-pointer")}
-                onClick={() => navigate(`/events/${event.id}`)}
-              >
-                <div className={clsx("relative")}>
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className={clsx("w-full h-48 object-cover")}
-                  />
-                  <div className={clsx("absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2")}>
-                    {event.carouselImages.map((_, index) => (
-                      <span
-                        key={index}
-                        className={clsx(
-                          "w-3 h-3 rounded-full",
-                          index === 0 ? "bg-white" : "bg-gray-400"
-                        )}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div className={clsx("p-4")}>
-                  <h3 className={clsx("text-lg font-bold text-gray-800 mb-2")}>
-                    {event.title}
-                  </h3>
-                  <div className={clsx("flex items-center gap-2 text-gray-600")}>
-                    <span>From $ {event.price} ~</span>
-                    <span className={clsx("flex items-center gap-1")}>
-                      <svg
-                        className={clsx("w-5 h-5")}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      {event.duration}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Load More Button */}
-      {visibleEvents < filteredEvents.length && (
-        <div className={clsx("py-6 text-center")}>
-          <button
-            onClick={handleLoadMore}
-            className={clsx(
-              "px-6 py-2 bg-orange-500 text-white rounded-md",
-              "hover:bg-orange-600 transition"
-            )}
+      {/* Category Chips */}
+      <div className="bg-gray-100 py-4">
+        <div className="max-w-6xl mx-auto px-4 flex flex-wrap gap-2">
+          <button 
+            className={`px-4 py-1 rounded-full text-sm font-medium ${selectedCategory === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+            onClick={() => handleCategoryChange('all')}
           >
-            Load More
+            All Adventures
+          </button>
+          {Object.keys(categoryEndpoints).filter(cat => cat !== 'all').map(category => (
+            <button
+              key={category}
+              className={`px-4 py-1 rounded-full text-sm font-medium ${selectedCategory === category ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+              onClick={() => handleCategoryChange(category)}
+            >
+              {formatCategoryName(category)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>
+      ) : error ? (
+        <div className="text-center py-10 text-red-600">
+          <p>{error}</p>
+          <button
+            onClick={() => fetchEvents(selectedCategory)}
+            className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+          >
+            Retry
           </button>
         </div>
+      ) : (
+        <>
+          {/* Events Grid */}
+          <section className="flex-grow py-10 bg-white">
+            <div className="max-w-6xl mx-auto px-4">
+              {filteredEvents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {filteredEvents.slice(0, visibleEvents).map((event) => (
+                    <div
+                      key={event?.id || Math.random().toString()}
+                      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                      onClick={() => handleEventClick(event?.id)}
+                    >
+                      <div className="relative">
+                        <img
+                          src={event?.bannerImages1}
+                          alt={event?.heading || "Event"}
+                          className="w-full h-48 object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/300x200?text=Image+Not+Found";
+                          }}
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
+                          <div className="flex gap-1">
+                            <span className="bg-orange-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
+                              {event?.numberOfDays || 0} days
+                            </span>
+                            {event.category && (
+                              <span className="bg-gray-700 text-white px-2 py-1 rounded-md text-xs font-semibold">
+                                {formatCategoryName(event.category)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Image indicators */}
+                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                          {event?.bannerImages1 && (
+                            <span className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                          {event?.bannerImages2 && (
+                            <span className="w-2 h-2 rounded-full bg-gray-400" />
+                          )}
+                          {event?.bannerImages3 && (
+                            <span className="w-2 h-2 rounded-full bg-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                          {event?.heading || "Untitled Event"}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {truncateText(event?.about, 100)}
+                        </p>
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <span className="flex items-center gap-1">
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                            {event?.calendarDates || "Date not specified"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-xl text-gray-600">
+                    No events found matching your search.
+                  </p>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="mt-4 text-orange-500 font-semibold"
+                    >
+                      Clear Search
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Load More Button */}
+          {visibleEvents < filteredEvents.length && (
+            <div className="py-6 text-center">
+              <button
+                onClick={handleLoadMore}
+                className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

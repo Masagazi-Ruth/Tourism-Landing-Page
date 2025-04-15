@@ -1,50 +1,52 @@
 import React from 'react';
 import clsx from 'clsx';
-import IMAGES from '../assets/images/image'; // Adjust path if needed
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-const Team = () => {
-  const teamMembers = [
-    {
-      name: "Emmy Rosum",
-      role: "Founder",
-      image: "https://img.freepik.com/free-photo/young-businesswoman-holding-digital-tablet-mobile-phone_329181-11723.jpg",
-    },
-    {
-      name: "Nandon Manek",
-      role: "Project Director",
-      image: "https://img.freepik.com/free-photo/portrait-indian-happy-businessman-using-laptop-computer-office_231208-2581.jpg",
-    },
-    {
-      name: "Hana Mira",
-      role: "Project Advisor",
-      image: "https://img.freepik.com/free-photo/business-finance-employment-female-successful-entrepreneurs-concept-smiling-professional-businesswoman-real-estate-broker-showing-clients-good-deal-carry-laptop-hand_1258-59121.jpg",
-    },
-    {
-      name: "Jitendra",
-      role: "Project Leader",
-      image: "https://s3-alpha-sig.figma.com/img/7d23/915f/5e8913064ed4e6da4633494fd00451e2?Expires=1743984000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=fzgMS1EOpcDvEI1xh6~656-TIlDJ9t35gxWOQPXf78t--nIod909JdnxkQpEJ4XEImKm2MT7YAyYcsI~u4Yk9VciGAiKbxBnSJRt28IQajM8G7M628AY~XpFLjppkEyMDBhj0zTt~LLaE2empfa~-leXgdnzVrJOh4HmhqTVCqw0JsNjYbo3TOzOq5wXyHWN456VjYTZZMqw9QXDuAOz1S3p9bDfDXuw-CDziqvGU1sXhETdC4EAFpawnexS4tC3j57cOJAHyReiytgUsR2fw7w4fiP05c-MaNByQCn2V2ccv~82jWdSwdoVZbtqM7iub0nAwtlINSYntqhd6cVgdw__",
-    },
-    {
-      name: "William Henry",
-      role: "Project Leader",
-      image: "https://img.freepik.com/free-photo/portrait-smiling-businessman-using-digital-tablet-waiting-area_107420-95802.jpg",
-    },
-    {
-      name: "Emily Rose",
-      role: "Project Leader",
-      image: "https://img.freepik.com/free-photo/portrait-beautiful-dreaming-employee_496169-2536.jpg",
-    },
-    {
-      name: "Sophie Anne",
-      role: "Asst Project Leader",
-      image: "https://img.freepik.com/free-photo/brunette-businesswoman-posing_23-2148142767.jpg",
-    },
-    {
-      name: "Emmy Rosum",
-      role: "Asst Project Leader",
-      image: "https://img.freepik.com/free-photo/confident-entrepreneur-looking-camera-with-arms-folded-smiling_1098-18840.jpg",
-    },
-  ];
+const Teams = () => {
+  // State for team members and loading/error states
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch team data from the API using axios
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await axios.get('http://54.210.95.246:3005/api/v1/team');
+
+        // Check if data has the expected structure
+        if (response.data && Array.isArray(response.data.data)) {
+          setTeamMembers(response.data.data);
+        } else if (response.data && Array.isArray(response.data)) {
+          // If the data is directly an array
+          setTeamMembers(response.data);
+        } else {
+          // Fallback to a default structure if API response is unexpected
+          console.warn("API response format unexpected, using default structure");
+          setTeamMembers([]);
+        }
+      } catch (err) {
+        console.error("Error fetching team data:", err);
+        setError("Failed to load team data. Please try again later.");
+
+        // Fallback to placeholder data if API fails
+        setTeamMembers([
+          { name: "Emmy Rosum", designation: "Founder", profileImage: "https://source.unsplash.com/200x200/?business,leader" },
+          { name: "Nandan Manek", designation: "Project Director", profileImage: "https://source.unsplash.com/200x200/?manager" },
+          { name: "Hana Mira", designation: "Project Advisor", profileImage: "https://source.unsplash.com/200x200/?consultant" },
+          { name: "Jitendra", designation: "Project Leader", profileImage: "https://source.unsplash.com/200x200/?developer" }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTeamData();
+  }, []);
 
   return (
     <div className={clsx("min-h-screen flex flex-col")}>
@@ -58,28 +60,50 @@ const Team = () => {
         </div>
       </section>
 
-      {/* Team Members Grid */}
-      <section className={clsx("flex-grow py-10 bg-white")}>
-        <div className={clsx("max-w-6xl mx-auto px-4")}>
-          <div className={clsx("grid grid-cols-1 md:grid-cols-4 gap-6")}>
-            {teamMembers.map((member, index) => (
-              <div key={index} className={clsx("text-center")}>
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className={clsx("w-full h-64 object-cover rounded-md mb-4")}
-                />
-                <h3 className={clsx("text-lg font-bold text-gray-800 mb-1")}>
-                  {member.name}
-                </h3>
-                <p className={clsx("text-gray-600")}>{member.role}</p>
-              </div>
-            ))}
+      <section className="container mx-auto px-4 py-8">
+        
+
+        {error && (
+          <div className="text-red-500 text-center mb-6 p-4 bg-red-100 rounded-lg">
+            {error}
           </div>
-        </div>
+        )}
+
+        {isLoading ? (
+          // Loading state
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#DD501DE8]"></div>
+          </div>
+        ) : (
+          // Team members grid
+          <section className={clsx("flex-grow py-10 bg-white")}>
+            <div className={clsx("max-w-6xl mx-auto px-4")}>
+              <div className={clsx("grid grid-cols-1 md:grid-cols-4 gap-6")}>
+                {teamMembers.map((member, index) => (
+                  <div
+                    key={member.id || index}
+                    className="bg-white rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow duration-300"
+                  >
+                    <img
+                      src={member.profileImage || `https://source.unsplash.com/200x200/?person,${index}`}
+                      alt={member.name}
+                      className="w-32 h-32 mx-auto object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=random`;
+                      }}
+                    />
+                    <h3 className="text-xl font-semibold mt-4">{member.name}</h3>
+                    <p className="text-gray-600">{member.designation}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </section>
     </div>
   );
 };
 
-export default Team;
+export default Teams;

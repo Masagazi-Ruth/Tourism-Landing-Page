@@ -2,8 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import { AuthProvider } from './components/AuthContext';
-import EventDetail from './components/EventDetail';
-import TrekDetail from './components/TrekDetail';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 import Events from './pages/EventsPage';
@@ -35,7 +33,9 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
 
               {/* Protected Routes */}
-              <Route path="/events" element={<ProtectedRoute element={<Events />} />}/>
+              <ErrorBoundary>
+                <Route path="/events" element={<ProtectedRoute element={<Events />} />}/>
+              </ErrorBoundary>
               <Route path="/events/:id" element={<DetailPage />} />
               <Route path="/teams" element={<ProtectedRoute element={<Teams />} />}/>
               <Route path="/detailpage" element={<ProtectedRoute element={<DetailPage />} />}/>
