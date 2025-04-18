@@ -1,104 +1,247 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import HeroSection from './HeroSection';
 import SectionContainer from './SectionContainer';
 import TripCard from './TripCard';
 import VideoCard from './VideoCard';
 import '../App.css';
-import { FaStar } from 'react-icons/fa';
-import IMAGES from '../assets/images/image'; // Correct path to images.jsx
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import IMAGES from '../assets/images/image';
 
 const Body = () => {
   const navigate = useNavigate();
 
+  // Hero data (static) with fallback
   const heroData = {
     title: "Experience Nature",
     subtitle: "India's Largest Trekking Organization",
-    backgroundImage: IMAGES.Heros,
+    backgroundImage: IMAGES.Heros || 'https://via.placeholder.com/1200x600?text=Hero+Image',
   };
-  const highlightedEvents = [
-    { id: "he1", title: "Kilimanjaro", image: IMAGES.Kilimanjaro },
-    { id: "he2", title: "Madagascar", image: IMAGES.Madagascar },
-    { id: "he3", title: "Cape Town", image: IMAGES.CapeTown },
-  ];
-  const snowTreks = [
-    { id: "st1", title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek },
-    { id: "st2", title: "Mount Kenya Trek", image: IMAGES.MountKenyaTrek, badges: ["Mount Kenya Trek"] },
-    { id: "st3", title: "Rwenzori Trek", image: IMAGES.RwenzoriTrek, badges: ["Rwenzori Trek"] },
-    { id: "st4", title: "Atlas Trek", image: IMAGES.AtlasTrek, badges: ["Atlas Trek"] },
-  ];
-  const summerEvents = [
-    { id: "se1", title: "Kruger Park", image: IMAGES.KrugerPark },
-    { id: "se2", title: "Western Cape", image: IMAGES.WesternCape },
-    { id: "se3", title: "Addo Park", image: IMAGES.AddoPark },
-    { id: "se4", title: "Masai Mara", image: IMAGES.MasaiMara },
-  ];
-  const epicAdventures = [
-    { id: "ea1", title: "Kilimanjaro Trek", image: IMAGES.KilimanjaroTrek, badges: ["Extreme", "Guide Required"] },
-    { id: "ea2", title: "Hwange Park", image: IMAGES.HwangePark },
-    { id: "ea3", title: "Botswana", image: IMAGES.Botswana },
-  ];
-  const specialEvents = [
-    { id: "sp1", title: "Hunting", image: IMAGES.Hunting, badges: ["Popular", "Challenging"] },
-    { id: "sp2", title: "Training Camp", image: IMAGES.TrainingCamp, badges: ["Exotic", "Wildlife"] },
-  ];
-  
-  const exclusiveFootage = [
+
+  // State for event categories
+  const [highlightedEvents, setHighlightedEvents] = useState([]);
+  const [snowTreks, setSnowTreks] = useState([]);
+  const [summerEvents, setSummerEvents] = useState([]);
+  const [monsoonEvents, setMonsoonEvents] = useState([]);
+  const [epicAdventures, setEpicAdventures] = useState([]);
+  const [specialEvents, setSpecialEvents] = useState([]);
+
+  // State for testimonials
+  const [testimonials, setTestimonials] = useState({});
+
+  // State for exclusive footage (static)
+  const [exclusiveFootage] = useState([
     {
       id: 1,
       videoId: "BHACKCNDMW8",
       title: "Exploring the Wilderness: A Journey to Remember",
       downloadUrl: "#",
-      shareUrl: "https://www.youtube.com/watch?v=BHACKCNDMW8"
+      shareUrl: "https://www.youtube.com/watch?v=BHACKCNDMW8",
     },
     {
       id: 2,
       videoId: "KfNthrjEClE",
       title: "Epic Trekking Adventures in the Mountains",
       downloadUrl: "#",
-      shareUrl: "https://www.youtube.com/watch?v=KfNthrjEClE"
+      shareUrl: "https://www.youtube.com/watch?v=KfNthrjEClE",
     },
     {
       id: 3,
       videoId: "W6kp_lSISWg",
       title: "Hunting in the Wild: A Unique Experience",
       downloadUrl: "#",
-      shareUrl: "https://www.youtube.com/watch?v=W6kp_lSISWg"
+      shareUrl: "https://www.youtube.com/watch?v=W6kp_lSISWg",
     },
-  ];
+  ]);
 
-  const testimonials = {
-    milton: {
-      name: "Milton Austin",
-      role: "Sales Manager, ABC",
-      message:
-        "This trekking organization is excellent. Their costs are minimal due to their NGO's non-profit efforts. You can have the experience of trekking at the lowest cost with basic amenities and the best available trek leaders. The best part is the food they provide during the trek. Their cooks are the best I have experienced so far with different organizations. The food they serve is healthy and a balan.",
-    },
-    annie: {
-      name: "Annie",
-      role: "Head of Sales, ABC",
-      message:
-        "I had an amazing experience! The trek was well-organized, and the guides were extremely helpful. I highly recommend this adventure to everyone.",
-    },
-    sandra: {
-      name: "Sandra",
-      role: "Head of Sales, ABC",
-      message:
-        "An unforgettable experience! The support team ensured we had everything we needed. The entire trek was breathtaking, and I can't wait to do it again!",
-    },
-  };
+  // State for loading and errors
+  const [loading, setLoading] = useState({
+    highlighted: true,
+    snowTreks: true,
+    summerEvents: true,
+    monsoonEvents: true,
+    epicAdventures: true,
+    specialEvents: true,
+    testimonials: true,
+  });
+  const [errors, setErrors] = useState({
+    highlighted: null,
+    snowTreks: null,
+    summerEvents: null,
+    monsoonEvents: null,
+    epicAdventures: null,
+    specialEvents: null,
+    testimonials: null,
+  });
 
-  const [selectedPerson, setSelectedPerson] = useState("milton");
+  // State for selected person and hovered section
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [hoveredSection, setHoveredSection] = useState("Highlighted Events");
 
-  const profileImages = {
-    milton: IMAGES.Milton || "https://img.freepik.com/free-photo/young-bearded-man-with-striped-shirt_273609-5677.jpg",
-    annie: IMAGES.Annie || "https://img.freepik.com/free-photo/portrait-expressive-young-woman_1258-48167.jpg",
-    sandra: IMAGES.Sandra || "https://img.freepik.com/free-photo/portrait-caucasian-woman-smiling_53876-24998.jpg",
+  // API endpoints using environment variable, memoized
+  const apiEndpoints = useMemo(() => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sample-project-api.chordifyed.com/api/v1';
+    return {
+      highlighted: `${baseUrl}/events/highlighted-events`,
+      snowTreks: `${baseUrl}/events/snow-treks-events`,
+      summerEvents: `${baseUrl}/events/summer-events`,
+      monsoonEvents: `${baseUrl}/events/monsoon-events`,
+      epicAdventures: `${baseUrl}/events/epic-adventure-events`,
+      specialEvents: `${baseUrl}/events/special-events`,
+      testimonials: `${baseUrl}/info/testimonials`,
+    };
+  }, []);
+
+  // Fetch events for a specific category
+  const fetchEvents = useCallback(async (category, setData) => {
+    const controller = new AbortController();
+    try {
+      setLoading((prev) => ({ ...prev, [category]: true }));
+      setErrors((prev) => ({ ...prev, [category]: null }));
+
+      const response = await axios.get(apiEndpoints[category], {
+        signal: controller.signal,
+      });
+
+      const data = Array.isArray(response.data) ? response.data : response.data[category] || [];
+      setData(data);
+    } catch (err) {
+      console.error(`Error fetching ${category}:`, err.message, err.response);
+      if (err.name === 'AbortError') return;
+      setErrors((prev) => ({
+        ...prev,
+        [category]: `Failed to load ${category} data. Please try again.`,
+      }));
+    } finally {
+      setLoading((prev) => ({ ...prev, [category]: false }));
+    }
+    return () => controller.abort();
+  }, [apiEndpoints]);
+
+  // Fetch testimonials
+  const fetchTestimonials = useCallback(async () => {
+    const controller = new AbortController();
+    try {
+      setLoading((prev) => ({ ...prev, testimonials: true }));
+      setErrors((prev) => ({ ...prev, testimonials: null }));
+
+      const response = await axios.get(apiEndpoints.testimonials, {
+        signal: controller.signal,
+      });
+
+      // Transform API array into object with keys
+      const testimonialObj = response.data.reduce((acc, curr) => {
+        const key = curr.name.toLowerCase().replace(/\s+/g, '');
+        acc[key] = {
+          name: curr.name,
+          role: curr.role,
+          message: curr.review,
+          image: curr.profileImage,
+          ratings: curr.ratings,
+        };
+        return acc;
+      }, {});
+
+      setTestimonials(testimonialObj);
+      // Set the first person as selected
+      const firstKey = Object.keys(testimonialObj)[0];
+      if (firstKey) setSelectedPerson(firstKey);
+    } catch (err) {
+      console.error('Error fetching testimonials:', err.message, err.response);
+      if (err.name === 'AbortError') return;
+      setErrors((prev) => ({
+        ...prev,
+        testimonials: 'Failed to load testimonials. Please try again.',
+      }));
+    } finally {
+      setLoading((prev) => ({ ...prev, testimonials: false }));
+    }
+    return () => controller.abort();
+  }, [apiEndpoints]);
+
+  // Fetch all data on mount
+  useEffect(() => {
+    fetchEvents('highlighted', setHighlightedEvents);
+    fetchEvents('snowTreks', setSnowTreks);
+    fetchEvents('summerEvents', setSummerEvents);
+    fetchEvents('monsoonEvents', setMonsoonEvents);
+    fetchEvents('epicAdventures', setEpicAdventures);
+    fetchEvents('specialEvents', setSpecialEvents);
+    fetchTestimonials();
+  }, [fetchEvents, fetchTestimonials]);
+
+  // Transform API data to match TripCard props
+  const transformEventData = (events) =>
+    events.map((event) => ({
+      id: event.id,
+      title: event.heading,
+      image: event.bannerImages1,
+      badges: event.badges || [],
+    }));
+
+  // Memoize transformed data
+  const memoizedHighlightedEvents = useMemo(
+    () => transformEventData(highlightedEvents),
+    [highlightedEvents]
+  );
+  const memoizedSnowTreks = useMemo(() => transformEventData(snowTreks), [snowTreks]);
+  const memoizedSummerEvents = useMemo(() => transformEventData(summerEvents), [summerEvents]);
+  const memoizedMonsoonEvents = useMemo(() => transformEventData(monsoonEvents), [monsoonEvents]);
+  const memoizedEpicAdventures = useMemo(() => transformEventData(epicAdventures), [epicAdventures]);
+  const memoizedSpecialEvents = useMemo(() => transformEventData(specialEvents), [specialEvents]);
+
+  // Render star ratings dynamically
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} className="text-3xl text-yellow-400" />);
+    }
+    if (hasHalfStar) {
+      stars.push(<FaStarHalfAlt key="half" className="text-3xl text-yellow-400" />);
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<FaRegStar key={`empty-${i}`} className="text-3xl text-yellow-400" />);
+    }
+
+    return stars;
   };
 
-  // useEffect to log state changes
+  // Skeleton Loader Component
+  const SkeletonCard = ({ variant = 'default' }) => (
+    <div
+      className={clsx(
+        'bg-white rounded-lg shadow-md overflow-hidden animate-pulse',
+        variant === 'large' ? 'h-80' : 'h-64'
+      )}
+    >
+      <div className="w-full h-48 bg-gray-200" />
+      <div className="p-4">
+        <div className="h-6 bg-gray-200 rounded mb-2" />
+        <div className="h-4 bg-gray-200 rounded" />
+      </div>
+    </div>
+  );
+
+  // Error Display Component
+  const ErrorDisplay = ({ error, onRetry }) => (
+    <div className="text-center py-10 text-red-600">
+      <p>{error}</p>
+      <button
+        onClick={onRetry}
+        className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+      >
+        Retry
+      </button>
+    </div>
+  );
+
+  // useEffect for logging state changes
   useEffect(() => {
     console.log(`Selected person changed to: ${selectedPerson}`);
   }, [selectedPerson]);
@@ -107,16 +250,23 @@ const Body = () => {
     console.log(`Hovered section changed to: ${hoveredSection}`);
   }, [hoveredSection]);
 
-  // useEffect to add a global event listener for keyboard navigation
+  // useEffect for keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-        // Example: Navigate between sections using arrow keys
-        const sections = ["highlighted", "snowTreks", "summerEvents", "epicAdventures", "specialEvents", "exclusiveFootage"];
-        const currentIndex = sections.indexOf(hoveredSection);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const sections = [
+          'highlighted',
+          'snowTreks',
+          'summerEvents',
+          'monsoonEvents',
+          'epicAdventures',
+          'specialEvents',
+          'exclusiveFootage',
+        ];
+        const currentIndex = sections.indexOf(hoveredSection.toLowerCase());
         let newIndex;
 
-        if (e.key === "ArrowLeft") {
+        if (e.key === 'ArrowLeft') {
           newIndex = currentIndex > 0 ? currentIndex - 1 : sections.length - 1;
         } else {
           newIndex = currentIndex < sections.length - 1 ? currentIndex + 1 : 0;
@@ -126,8 +276,8 @@ const Body = () => {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [hoveredSection]);
 
   return (
@@ -143,21 +293,34 @@ const Body = () => {
       <SectionContainer
         title="Highlighted Events"
         subtitle="Recommended camps by our instructors"
-        gridCols="md:grid-cols-3"
-        onMouseEnter={() => setHoveredSection("highlighted")}
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('highlighted')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "highlighted"}
+        isHovered={hoveredSection === 'highlighted'}
       >
-        {highlightedEvents.map(event => (
-          <TripCard
-            key={event.id}
-            image={event.image}
-            title={event.title}
-            badges={event.badges}
-            variant="default"
-            onClick={() => navigate(`/events/${event.id}`)}
+        {loading.highlighted ? (
+          Array(3)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} />)
+        ) : errors.highlighted ? (
+          <ErrorDisplay
+            error={errors.highlighted}
+            onRetry={() => fetchEvents('highlighted', setHighlightedEvents)}
           />
-        ))}
+        ) : memoizedHighlightedEvents.length > 0 ? (
+          memoizedHighlightedEvents.map((event) => (
+            <TripCard
+              key={event.id}
+              image={event.image}
+              title={event.title}
+              badges={event.badges}
+              variant="default"
+              onClick={() => navigate(`/events/${event.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No events available.</p>
+        )}
       </SectionContainer>
 
       {/* Snow Treks (4 columns) */}
@@ -165,40 +328,103 @@ const Body = () => {
         title="Snow Treks"
         subtitle="Experience the magic of winter landscapes with our guided snow treks"
         bgColor="bg-gray-100"
-        gridCols="md:grid-cols-4"
-        onMouseEnter={() => setHoveredSection("snowTreks")}
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('snowTreks')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "snowTreks"}
+        isHovered={hoveredSection === 'snowTreks'}
       >
-        {snowTreks.map(trek => (
-          <TripCard
-            key={trek.id}
-            image={trek.image}
-            title={trek.title}
-            variant="default"
-            onClick={() => navigate(`/events/${trek.id}`)}
+        {loading.snowTreks ? (
+          Array(4)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} />)
+        ) : errors.snowTreks ? (
+          <ErrorDisplay
+            error={errors.snowTreks}
+            onRetry={() => fetchEvents('snowTreks', setSnowTreks)}
           />
-        ))}
+        ) : memoizedSnowTreks.length > 0 ? (
+          memoizedSnowTreks.map((trek) => (
+            <TripCard
+              key={trek.id}
+              image={trek.image}
+              title={trek.title}
+              badges={trek.badges}
+              variant="default"
+              onClick={() => navigate(`/events/${trek.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No treks available.</p>
+        )}
       </SectionContainer>
 
       {/* Summer Events (4 columns) */}
       <SectionContainer
         title="Summer Events"
         subtitle="Join our exciting range of summer activities"
-        gridCols="md:grid-cols-4"
-        onMouseEnter={() => setHoveredSection("summerEvents")}
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('summerEvents')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "summerEvents"}
+        isHovered={hoveredSection === 'summerEvents'}
       >
-        {summerEvents.map(event => (
-          <TripCard
-            key={event.id}
-            image={event.image}
-            title={event.title}
-            variant="default"
-            onClick={() => navigate(`/events/${event.id}`)}
+        {loading.summerEvents ? (
+          Array(4)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} />)
+        ) : errors.summerEvents ? (
+          <ErrorDisplay
+            error={errors.summerEvents}
+            onRetry={() => fetchEvents('summerEvents', setSummerEvents)}
           />
-        ))}
+        ) : memoizedSummerEvents.length > 0 ? (
+          memoizedSummerEvents.map((event) => (
+            <TripCard
+              key={event.id}
+              image={event.image}
+              title={event.title}
+              badges={event.badges}
+              variant="default"
+              onClick={() => navigate(`/events/${event.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No events available.</p>
+        )}
+      </SectionContainer>
+
+      {/* Monsoon Events (4 columns) */}
+      <SectionContainer
+        title="Monsoon Events"
+        subtitle="Explore thrilling adventures during the lush monsoon season"
+        bgColor="bg-gray-100"
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('monsoonEvents')}
+        onMouseLeave={() => setHoveredSection(null)}
+        isHovered={hoveredSection === 'monsoonEvents'}
+      >
+        {loading.monsoonEvents ? (
+          Array(4)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} />)
+        ) : errors.monsoonEvents ? (
+          <ErrorDisplay
+            error={errors.monsoonEvents}
+            onRetry={() => fetchEvents('monsoonEvents', setMonsoonEvents)}
+          />
+        ) : memoizedMonsoonEvents.length > 0 ? (
+          memoizedMonsoonEvents.map((event) => (
+            <TripCard
+              key={event.id}
+              image={event.image}
+              title={event.title}
+              badges={event.badges}
+              variant="default"
+              onClick={() => navigate(`/events/${event.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No events available.</p>
+        )}
       </SectionContainer>
 
       {/* Epic Adventure (3 columns) */}
@@ -206,58 +432,81 @@ const Body = () => {
         title="Epic Adventure"
         subtitle="Push your limits with our most thrilling outdoor challenges"
         bgColor="bg-gray-100"
-        gridCols="md:grid-cols-3"
-        onMouseEnter={() => setHoveredSection("epicAdventures")}
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('epicAdventures')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "epicAdventures"}
+        isHovered={hoveredSection === 'epicAdventures'}
       >
-        {epicAdventures.map(adventure => (
-          <TripCard
-            key={adventure.id}
-            image={adventure.image}
-            title={adventure.title}
-            badges={adventure.badges}
-            variant="large"
-            onClick={() => {
-              console.log('Navigating to:', `/events/${adventure.id}`);
-              navigate(`/events/${adventure.id}`);
-            }}
+        {loading.epicAdventures ? (
+          Array(3)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} variant="large" />)
+        ) : errors.epicAdventures ? (
+          <ErrorDisplay
+            error={errors.epicAdventures}
+            onRetry={() => fetchEvents('epicAdventures', setEpicAdventures)}
           />
-        ))}
+        ) : memoizedEpicAdventures.length > 0 ? (
+          memoizedEpicAdventures.map((adventure) => (
+            <TripCard
+              key={adventure.id}
+              image={adventure.image}
+              title={adventure.title}
+              badges={adventure.badges}
+              variant="large"
+              onClick={() => navigate(`/events/${adventure.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No adventures available.</p>
+        )}
       </SectionContainer>
 
       {/* Special Events (3 columns) */}
       <SectionContainer
         title="Special Events"
         subtitle="Join us for unique, limited-time gatherings that celebrate remarkable occasions"
-        gridCols="md:grid-cols-3"
-        onMouseEnter={() => setHoveredSection("specialEvents")}
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('specialEvents')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "specialEvents"}
+        isHovered={hoveredSection === 'specialEvents'}
       >
-        {specialEvents.map(event => (
-          <TripCard
-            key={event.id}
-            image={event.image}
-            title={event.title}
-            badges={event.badges}
-            variant="default"
-            onClick={() => navigate(`/events/${event.id}`)}
+        {loading.specialEvents ? (
+          Array(3)
+            .fill()
+            .map((_, i) => <SkeletonCard key={i} />)
+        ) : errors.specialEvents ? (
+          <ErrorDisplay
+            error={errors.specialEvents}
+            onRetry={() => fetchEvents('specialEvents', setSpecialEvents)}
           />
-        ))}
+        ) : memoizedSpecialEvents.length > 0 ? (
+          memoizedSpecialEvents.map((event) => (
+            <TripCard
+              key={event.id}
+              image={event.image}
+              title={event.title}
+              badges={event.badges}
+              variant="default"
+              onClick={() => navigate(`/events/${event.id}`)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No events available.</p>
+        )}
       </SectionContainer>
 
       {/* Exclusive Footage (2 columns) */}
-      <SectionContainer
+      <SectionContainer className='bg-pink-200'
         title="Experience Yourself"
         subtitle="Exclusive footage from our camps"
-        bgColor="bg-pink-50"
-        gridCols="md:grid-cols-2"
-        onMouseEnter={() => setHoveredSection("exclusiveFootage")}
+        bgColor="bg-pink-800"
+        gridCols="md:grid-cols-6"
+        onMouseEnter={() => setHoveredSection('exclusiveFootage')}
         onMouseLeave={() => setHoveredSection(null)}
-        isHovered={hoveredSection === "exclusiveFootage"}
+        isHovered={hoveredSection === 'exclusiveFootage'}
       >
-        {exclusiveFootage.map(video => (
+        {exclusiveFootage.map((video) => (
           <VideoCard
             key={video.id}
             videoId={video.videoId}
@@ -270,94 +519,123 @@ const Body = () => {
 
       {/* Why People Love Invincible */}
       <section
-        className={clsx(
-          "why-people-love-section",
-          "p-10 bg-gray-50 rounded-xl shadow-lg mt-10"
-        )}
+        className={clsx('why-people-love-section', 'p-10 bg-gray-50 rounded-xl shadow-lg mt-10')}
       >
-        <div className={clsx("mb-8 text-left")}>
-          <h1
-            className={clsx(
-              "text-3xl font-bold mb-2 text-gray-800"
-            )}
-          >
+        <div className={clsx('mb-8 text-left')}>
+          <h1 className={clsx('text-3xl font-bold mb-2 text-gray-800')}>
             Why people 💖 Invincible
           </h1>
-          <h2
-            className={clsx(
-              "text-xl font-normal text-gray-600"
-            )}
-          >
+          <h2 className={clsx('text-xl font-normal text-gray-600')}>
             Experience the best with us
           </h2>
         </div>
 
-        <div className={clsx("flex flex-col md:flex-row gap-8 items-start")}>
+        <div className={clsx('flex flex-col md:flex-row gap-8 items-start')}>
           {/* Profile Image Section */}
           <div
-            className={clsx(
-              "bg-white p-6 rounded-lg shadow-md"
-            )}
-            style={{ width: "547px", height: "429px" }}
+            className={clsx('bg-[#f1e9e9] p-6 rounded-lg shadow-md')}
+            style={{ width: '600px', height: '500px' }}
           >
-            <div className={clsx("space-y-8 h-full flex flex-col justify-center bg-[#EEE6E6]")}>
-              {Object.keys(testimonials).map((key) => (
-                <div
-                  key={key}
-                  className={clsx("flex items-center cursor-pointer")}
-                  onClick={() => setSelectedPerson(key)}
-                >
+            {loading.testimonials ? (
+              <div className="space-y-8 h-full flex flex-col justify-center">
+                {Array(3)
+                  .fill()
+                  .map((_, i) => (
+                    <div key={i} className="flex items-center animate-pulse">
+                      <div className="w-16 h-16 rounded-full bg-gray-200 mr-4" />
+                      <div>
+                        <div className="h-6 w-32 bg-gray-200 rounded mb-1" />
+                        <div className="h-4 w-24 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ) : errors.testimonials ? (
+              <ErrorDisplay
+                error={errors.testimonials}
+                onRetry={fetchTestimonials}
+              />
+            ) : Object.keys(testimonials).length > 0 ? (
+              <div className={clsx('space-y-8 h-full flex flex-col justify-center bg-[#f1e9e9]')}>
+                {Object.keys(testimonials).map((key) => (
                   <div
-                    className={clsx(
-                      "w-16 h-16 rounded-full bg-gray-200 mr-4 overflow-hidden border-2 border-transparent",
-                      "hover:border-blue-500 transition"
-                    )}
+                    key={key}
+                    className={clsx('flex items-center cursor-pointer')}
+                    onClick={() => setSelectedPerson(key)}
                   >
-                    <img
-                      src={profileImages[key]}
-                      alt={testimonials[key].name}
-                      className={clsx("w-full h-full object-cover")}
-                    />
-                  </div>
-                  <div>
-                    <h3
+                    <div
                       className={clsx(
-                        "font-bold text-left text-gray-800 text-xl",
-                        selectedPerson === key && "text-blue-500"
+                        'w-16 h-16 rounded-full bg-gray-200 mr-4 overflow-hidden border-2 border-transparent',
+                        'hover:border-pink-400 transition'
                       )}
                     >
-                      {testimonials[key].name}
-                    </h3>
-                    <p className={clsx("text-md text-gray-500")}>
-                      {testimonials[key].role}
-                    </p>
+                      <img
+                        src={testimonials[key].image}
+                        alt={testimonials[key].name}
+                        className={clsx('w-full h-full object-cover')}
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/150?text=Profile';
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <h3
+                        className={clsx(
+                          'font-bold text-left text-gray-800 text-xl',
+                          selectedPerson === key && 'text-blue-500'
+                        )}
+                      >
+                        {testimonials[key].name}
+                      </h3>
+                      <p className={clsx('text-md text-gray-500')}>
+                        {testimonials[key].role}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-600">No testimonials available.</p>
+            )}
           </div>
 
           {/* Testimonial Display Section */}
-          <div className={clsx("flex flex-col")}>
-            <div className={clsx("flex mb-4 ml-2")}>
-              {[...Array(5)].map((_, i) => (
-                <FaStar key={i} className={clsx("text-3xl text-yellow-400")} />
-              ))}
+          <div className={clsx('flex flex-col')}>
+            <div className={clsx('flex mb-4 ml-2')}>
+              {selectedPerson && testimonials[selectedPerson]
+                ? renderStars(testimonials[selectedPerson].ratings)
+                : Array(5)
+                  .fill()
+                  .map((_, i) => (
+                    <FaStar key={i} className={clsx('text-3xl text-yellow-400')} />
+                  ))}
             </div>
 
             <div
-              className={clsx(
-                "bg-white p-6 rounded-lg shadow-md"
-              )}
-              style={{ width: "569px", height: "358px" }}
+              className={clsx('bg-white p-6 rounded-7px shadow-md')}
+              style={{ width: '550px', height: '400px' }}
             >
-              <p
-                className={clsx(
-                  "text-gray-700 text-left leading-relaxed text-lg h-full flex items-center"
-                )}
-              >
-                {testimonials[selectedPerson].message}
-              </p>
+              {loading.testimonials ? (
+                <div className="h-full flex items-center animate-pulse">
+                  <div className="w-full h-20 bg-gray-200 rounded" />
+                </div>
+              ) : errors.testimonials ? (
+                <p className="text-gray-700 text-left leading-relaxed text-lg">
+                  Unable to load testimonial.
+                </p>
+              ) : selectedPerson && testimonials[selectedPerson] ? (
+                <p
+                  className={clsx(
+                    'text-gray-700 text-left leading-relaxed text-lg h-full flex items-center'
+                  )}
+                >
+                  {testimonials[selectedPerson].message}
+                </p>
+              ) : (
+                <p className="text-gray-700 text-left leading-relaxed text-lg">
+                  Select a person to view their testimonial.
+                </p>
+              )}
             </div>
           </div>
         </div>

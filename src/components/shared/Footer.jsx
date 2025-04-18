@@ -1,119 +1,125 @@
 import React from "react";
 import clsx from "clsx";
-import { FaLinkedin, FaFacebook, FaInstagram, FaYoutube, FaSearch } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube, FaSearch, FaUsers, FaInfoCircle, FaCalendarAlt, FaEnvelope, FaFileContract, FaLock } from 'react-icons/fa';
 import { PiThreadsLogoBold } from "react-icons/pi";
 import "./Footer.css";
 import { Link } from "react-router-dom";
+
+const footerLinks = [
+  { name: "Team", icon: <FaUsers />, path: "/teams" },
+  { name: "About", icon: <FaInfoCircle />, path: "/about" },
+  { name: "Events", icon: <FaCalendarAlt />, path: "/events" },
+  { name: "ContactUs", icon: <FaEnvelope />, path: "/contact" },
+  { name: "Terms And Conditions", icon: <FaFileContract />, path: "/termsandconditions" },
+  { name: "Privacy Policy", icon: <FaLock />, path: "/privacypolicy" } 
+];
+
 
 const Footer = () => {
   return (
     <footer
       className={clsx(
         "footer",
-        "bg-pink-50 py-8 px-4 min-h-[200px]"
+        "bg-[#E6DADA] py-8 px-4 min-h-[200px] font-sans"
       )}
     >
       <div
         className={clsx(
           "max-w-7xl mx-auto",
-          "flex flex-col md:flex-row justify-between items-center gap-6"
+          "flex flex-col gap-6"
         )}
       >
         {/* Footer Title */}
-        <Link to="/" className={clsx("text-2xl font-bold text-gray-800")}>
-          HiddenSafari
-        </Link>
+        <div className="flex justify-center">
+          <Link to="/" className={clsx("text-3xl font-bold text-gray-800")}>
+            HiddenSafari
+          </Link>
+        </div>
 
         {/* Navigation Links */}
         <nav
           className={clsx(
             "footer-nav",
-            "flex flex-wrap gap-6 text-left text-gray-600"
+            "flex flex-wrap justify-center gap-6 text-gray-600 text-lg"
           )}
         >
-          <Link to="/" className={clsx("hover:text-gray-800")}>Home</Link>
-          <Link to="/events" className={clsx("hover:text-gray-800")}>Events</Link>
-          <Link to="/teams" className={clsx("hover:text-gray-800")}>Teams</Link>
-          <Link to="/about" className={clsx("hover:text-gray-800")}>About</Link>
-          <Link to="/contact" className={clsx("hover:text-gray-800")}>Contact</Link>
-          <Link to="/privacypolicy" className={clsx("hover:text-gray-800")}>PrivacyPolicy</Link>
-          <Link  to="/termsandconditions" className={clsx("hover:text-gray-800")}>TermsAndConditions</Link>
-                          
-          
+          {footerLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.path}
+              className={clsx("hover:text-gray-800 flex items-center gap-2")}
+            >
+              {link.icon}
+              <span>{link.name}</span>
+            </Link>
+          ))}
         </nav>
-        </div>
-      {/* Subscribe Section */}
-      <div
-        className={clsx(
-          "footer-subscribe",
-          "flex items-center"
-        )}
-      >
-        <input
-          type="email"
-          placeholder="Enter your Email"
-          className={clsx(
-            "px-4 py-2 rounded-l-md border border-gray-300 bg-black-100",
-            "focus:outline-none focus:ring-2 focus:ring-gray-400",
-            "hover:border-white transition",
-            "w-48 md:w-64"
-          )}
-        />
-        <button
-          className={clsx(
-            "search-button",
-            "px-4 py-2 bg-gray-600 rounded-r-md",
-            "hover:bg-gray-300 transition"
-          )}
-        >
-          <FaSearch className={clsx("text-black")} size={16} />
-        </button>
-      </div>
-      <div
-        className={clsx(
-          "footer-socials",
-          "pr-8 md:pr-14 flex gap-4 mt-8"
-        )}
-      >
+
+        {/* Search Bar and Socials on the Same Line */}
         <div
           className={clsx(
-            "social-circle linkedin",
-            "transform hover:scale-110 transition"
+            "flex flex-col md:flex-row justify-between text-black items-center gap-4 mt-4"
           )}
         >
-          <FaLinkedin size={20} />
-        </div>
-        <div
-          className={clsx(
-            "social-circle facebook",
-            "transform hover:scale-110 transition"
-          )}
-        >
-          <FaFacebook size={20} />
-        </div>
-        <div
-          className={clsx(
-            "social-circle instagram",
-            "transform hover:scale-110 transition"
-          )}
-        >
-          <FaInstagram size={20} />
-        </div>
-        <div
-          className={clsx(
-            "social-circle threads",
-            "transform hover:scale-110 transition"
-          )}
-        >
-          <PiThreadsLogoBold size={20} />
-        </div>
-        <div
-          className={clsx(
-            "social-circle youtube",
-            "transform hover:scale-110 transition"
-          )}
-        >
-          <FaYoutube size={20} />
+          {/* Search - Bottom Left */}
+          <div className="flex w-full md:w-auto">
+            <input
+              type="email"
+              placeholder="Enter your Email"
+              className={clsx(
+                "border border-width-4px px-4 py-2 rounded-l-md focus:outline-none w-full md:w-64",
+                "border-gray-500 bg-[#bd9d9d]  hover:border-gray-500 transition"
+              )}
+            />
+            <button
+              className={clsx(
+                "bg-gray-400 text-black px-4 py-2 rounded-r-md hover:bg-gray-500 transition"
+              )}
+            >
+              <FaSearch size={16} />
+            </button>
+          </div>
+
+          {/* Social Media Icons - Bottom Right */}
+          <div
+            className={clsx(
+              "footer-socials",
+              "flex gap-4"
+            )}
+          >
+            <div
+              className={clsx(
+                "social-circle facebook",
+                "transform hover:scale-110 transition"
+              )}
+            >
+              <FaFacebook size={20} className="text-blue-800" />
+            </div>
+            <div
+              className={clsx(
+                "social-circle instagram",
+                "transform hover:scale-110 transition"
+              )}
+            >
+              <FaInstagram size={20} className="text-pink-500" />
+            </div>
+            <div
+              className={clsx(
+                "social-circle threads",
+                "transform hover:scale-110 transition"
+              )}
+            >
+              <PiThreadsLogoBold size={20} className="text-black" />
+            </div>
+            <div
+              className={clsx(
+                "social-circle youtube",
+                "transform hover:scale-110 transition"
+              )}
+            >
+              <FaYoutube size={20} className="text-red-600" />
+            </div>
+          </div>
         </div>
       </div>
     </footer>

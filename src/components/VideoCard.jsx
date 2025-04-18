@@ -1,36 +1,52 @@
-// src/components/VideoCard.js
 import React from 'react';
 import clsx from 'clsx';
 
-const VideoCard = ({ videoId, title, downloadUrl, shareUrl }) => {
+const VideoCard = ({ videoId, title, downloadUrl, shareUrl, className }) => {
   return (
-    <div className={clsx("bg-white rounded-lg shadow-md overflow-hidden")}>
-      <div className={clsx("relative")}>
-        <img
-          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          alt={title}
-          className={clsx("w-full h-48 object-cover")}
-        />
-        <div className={clsx("absolute inset-0 flex items-center justify-center")}>
-          <svg
-            className={clsx("w-12 h-12 text-white opacity-80")}
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M8 5v14l11-7z" />
-          </svg>
+    <div
+      className={clsx(
+        'relative group rounded-lg shadow-lg overflow-hidden bg-white',
+        'h-80', // Fixed height to match SpecialEventCard
+        className
+      )}
+    >
+      <div className="relative h-3/5"> {/* ~192px for 16:9 iframe */}
+        <div
+          className={clsx(
+            "absolute top-0 left-0 w-full h-full transition-transform duration-500",
+            "group-hover:scale-105" // Subtle zoom effect
+          )}
+        >
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+            title={title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         </div>
       </div>
-      <div className={clsx("p-4")}>
-        <h3 className={clsx("text-lg font-bold text-gray-800 mb-2")}>{title}</h3>
-        <div className={clsx("flex gap-4")}>
-          <a href={downloadUrl} className={clsx("text-blue-500 hover:underline")}>
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{title}</h3>
+        <div className="flex space-x-4 mb-2">
+          <a
+            href={downloadUrl}
+            className="text-blue-500 hover:underline text-sm"
+            onClick={(e) => downloadUrl === '#' && e.preventDefault()}
+          >
             Download
           </a>
-          <a href={shareUrl} className={clsx("text-blue-500 hover:underline")}>
+          <a
+            href={shareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline text-sm"
+          >
             Share
           </a>
         </div>
+        
       </div>
     </div>
   );

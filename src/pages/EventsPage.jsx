@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const Events = () => {
@@ -8,83 +8,82 @@ const Events = () => {
   const [visibleEvents, setVisibleEvents] = useState(6);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [eventCategories, setEventCategories] = useState([]);
 
   // Map of category names to their API endpoints
   const categoryEndpoints = {
     all: 'all-events',
-    SnowTreks: 'snow-trek-events',
+    SnowTreks: 'snow-treks-events',
     SummerEvents: 'summer-events',
     MonsoonEvents: 'monsoon-events',
     EpicAdventures: 'epic-adventure-events',
-    SpecialEvents: 'special-events'
+    SpecialEvents: 'special-events',
   };
 
-  const fetchEvents = async (category = 'all') => {
+  const fetchEvents = useCallback(async (category = 'all') => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Get the appropriate endpoint for the selected category
       const endpoint = categoryEndpoints[category] || 'all-events';
-      const apiUrl = `http://54.210.95.246:3005/api/v1/events/${endpoint}`;
-      
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sample-project-api.chordifyed.com/api/v1';
+      const apiUrl = `${baseUrl}/events/${endpoint}`;
+
       console.log(`Fetching from: ${apiUrl}`);
       const response = await axios.get(apiUrl);
       console.log('API Response:', response.data);
-      
+
       // Handle different response structures based on category
       if (category === 'all' && response.data && typeof response.data === 'object') {
         // For 'all-events', we get an object with category arrays
         const categories = Object.keys(response.data);
-        setEventCategories(categories);
-        
+
         // Flatten all event arrays from different categories
         const allEvents = categories.reduce((acc, cat) => {
           const eventsWithCategory = response.data[cat].map(event => ({
             ...event,
-            category: cat
+            category: cat,
           }));
           return [...acc, ...eventsWithCategory];
         }, []);
-        
+
         setEvents(allEvents);
       } else if (Array.isArray(response.data)) {
         // For category-specific endpoints, we get an array directly
         const eventsWithCategory = response.data.map(event => ({
           ...event,
-          category: category
+          category,
         }));
         setEvents(eventsWithCategory);
       } else if (response.data && response.data[category] && Array.isArray(response.data[category])) {
         // Some APIs might return an object with a single category key
         const eventsWithCategory = response.data[category].map(event => ({
           ...event,
-          category: category
+          category,
         }));
         setEvents(eventsWithCategory);
       } else {
         setEvents([]);
       }
     } catch (err) {
+      console.error(`Error fetching ${category} events:`, err.message, err.response);
       setError(`Failed to load ${category} events. Please try again later.`);
-      console.error('Fetch Error:', err.message, err.response);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   // Initial data load
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   // Fetch new data when category changes
   useEffect(() => {
     if (selectedCategory) {
       fetchEvents(selectedCategory);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, fetchEvents]);
 
   // Title-based filtering within the current category
   const filteredEvents = events.filter((event) =>

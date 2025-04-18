@@ -1,22 +1,20 @@
-import React from 'react';
-import { useState, useEffect } from "react";
-import axios from "axios";
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const About = () => {
   // State for tracking if sections are visible
   const [visibleSections, setVisibleSections] = useState({
     vision: false,
     mission: false,
-    objectives: false
+    objectives: false,
   });
 
   // State for about us content
   const [aboutData, setAboutData] = useState({
-    title: "About Us",
-    vision: "",
-    mission: "",
-    objectives: ""
+    title: 'About Us',
+    vision: '',
+    mission: '',
+    objectives: '',
   });
 
   // State for loading and error handling
@@ -30,34 +28,36 @@ const About = () => {
       setError(null);
 
       try {
-        const response = await axios.get('http://54.210.95.246:3005/api/v1/info/about-us');
-        
+        // Use environment variable for API URL
+        const apiUrl = import.meta.env.VITE_API_URL || 'about-us'; // Fallback URL
+        const response = await axios.get(apiUrl);
+
         if (response.data && response.data.content) {
           // Parse the content to extract vision, mission, and objectives
           const content = response.data.content;
-          
+
           // Extract sections using regex
           const visionMatch = content.match(/Vision\s*\n\s*([\s\S]*?)(?=\n\s*Mission|\n\s*Objectives|$)/i);
           const missionMatch = content.match(/Mission\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Objectives|$)/i);
           const objectivesMatch = content.match(/Objectives\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Mission|$)/i);
-          
+
           setAboutData({
-            title: response.data.title || "About Us",
-            vision: visionMatch ? visionMatch[1].trim() : "",
-            mission: missionMatch ? missionMatch[1].trim() : "",
-            objectives: objectivesMatch ? objectivesMatch[1].trim() : ""
+            title: response.data.title || 'About Us',
+            vision: visionMatch ? visionMatch[1].trim() : '',
+            mission: missionMatch ? missionMatch[1].trim() : '',
+            objectives: objectivesMatch ? objectivesMatch[1].trim() : '',
           });
         } else {
           throw new Error('Invalid data format received from API');
         }
       } catch (err) {
-        console.error("Error fetching about us data:", err);
-        setError("Failed to load about us information. Please try again later.");
+        console.error('Error fetching about us data:', err);
+        setError('Failed to load about us information. Please try again later.');
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     fetchAboutData();
   }, []);
 
@@ -65,36 +65,35 @@ const About = () => {
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['vision', 'mission', 'objectives'];
-      
-      sections.forEach(section => {
+
+      sections.forEach((section) => {
         const element = document.getElementById(`${section}-section`);
         if (element) {
           const rect = element.getBoundingClientRect();
           const isVisible = rect.top < window.innerHeight - 100;
-          
+
           if (isVisible && !visibleSections[section]) {
-            setVisibleSections(prev => ({
+            setVisibleSections((prev) => ({
               ...prev,
-              [section]: true
+              [section]: true,
             }));
           }
         }
       });
     };
-    
+
     // Initial check
     handleScroll();
-    
+
     // Add scroll listener
     window.addEventListener('scroll', handleScroll);
-    
+
     // Cleanup
     return () => window.removeEventListener('scroll', handleScroll);
   }, [visibleSections]);
 
   return (
     <>
-    
       <div className="min-h-screen bg-gray-100">
         {/* Hero Section - Updated color to match other pages */}
         <section className="bg-orange-500 py-16 text-white">
@@ -103,7 +102,7 @@ const About = () => {
             <p className="mt-2">Who we are & where we stand.</p>
           </div>
         </section>
-        
+
         {isLoading ? (
           // Loading state
           <div className="flex justify-center items-center h-64">
@@ -112,43 +111,43 @@ const About = () => {
         ) : error ? (
           // Error state
           <div className="container mx-auto px-4 py-8">
-            <div className="bg-red-100 text-red-500 p-4 rounded-lg text-center">
-              {error}
-            </div>
+            <div className="bg-red-100 text-red-500 p-4 rounded-lg text-center">{error}</div>
           </div>
         ) : (
           <>
-          <section className="container mx-auto px-4 py-8">
-              <div className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                visibleSections.vision ? 'opacity-100' : 'opacity-0'
-              }`}>
+            <section className="container mx-auto px-4 py-8">
+              <div
+                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
+                  visibleSections.vision ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
                 <h3 className="text-2xl font-bold mb-4">Vision</h3>
                 <p className="text-gray-600">{aboutData.vision}</p>
               </div>
-            
-              <div className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                visibleSections.mission ? 'opacity-100' : 'opacity-0'
-              }`}>
+
+              <div
+                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
+                  visibleSections.mission ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
                 <h3 className="text-2xl font-bold mb-4">Mission</h3>
                 <p className="text-gray-600">{aboutData.mission}</p>
               </div>
-            
-              <div className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                visibleSections.objectives ? 'opacity-100' : 'opacity-0'
-              }`}>
+
+              <div
+                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
+                  visibleSections.objectives ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
                 <h3 className="text-2xl font-bold mb-4">Objectives</h3>
                 <p className="text-gray-600">{aboutData.objectives}</p>
               </div>
-            
             </section>
           </>
         )}
       </div>
-  
     </>
   );
-}
-
-
+};
 
 export default About;

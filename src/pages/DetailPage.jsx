@@ -1,7 +1,7 @@
-// pages/DetailPage.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
+import axios from 'axios';
 import { FaStar } from 'react-icons/fa';
 import IMAGES from '../assets/images/image';
 
@@ -9,150 +9,84 @@ const DetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const events = [
-    {
-      id: 1,
-      title: "Whole of South Africa",
-      price: "3,360",
-      description: "Explore the diverse landscapes and cultures of South Africa, from vibrant cities to stunning wildlife reserves.",
-      image: "https://img.freepik.com/free-photo/beautiful-shot-three-zebras-crossing-road-safari-with-trees_181624-30309.jpg",
-      rating: 4.7,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1: Arrive in Johannesburg.\nDay 2: Explore Soweto.\nDay 3-5: Safari in Kruger National Park.\nDay 6-7: Cape Town city tour.\nDay 8: Wine tasting in Stellenbosch.\nDay 9: Table Mountain hike.\nDay 10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Luxury lodges in Kruger and boutique hotels in Cape Town.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Accommodation",
-        },
-        {
-          title: "Activities",
-          description: "Safaris, city tours, wine tasting, and hiking.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Activities",
-        },
-        {
-          title: "Inclusions",
-          description:
-            "Included: All meals, guides, park fees, and accommodations.\nNot Included: Flights, insurance, personal expenses.",
-          image: "https://via.placeholder.com/600x400?text=South+Africa+Inclusions",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "South Africa with Mauritius",
-      price: "4,000",
-      description: "Combine South Africa’s wildlife with Mauritius’ pristine beaches for an unforgettable adventure.",
-      image: "https://img.freepik.com/free-photo/view-quiver-trees-forest-with-beautiful-sky-sunset-twilight-sky-scene-keetmanshoop-namibia_1150-21603.jpg",
-      rating: 4.8,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-5: South Africa (Cape Town, Kruger).\nDay 6-13: Mauritius beach resort.\nDay 14: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Mauritius+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "5-star resorts in Mauritius and safari lodges in South Africa.",
-          image: "https://via.placeholder.com/600x400?text=Mauritius+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Splendid South Africa",
-      price: "2,560",
-      description: "A compact journey through South Africa’s iconic landmarks and natural beauty.",
-      image: "https://img.freepik.com/free-photo/grassy-field-with-trees-giraffes-walking-around-with-light-blue-sky-background_181624-3477.jpg",
-      rating: 4.5,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Comfortable hotels and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 4,
-      title: "African Jambo",
-      price: "3,360",
-      description: "Experience the vibrant wildlife and cultures of Kenya and Tanzania.",
-      image: "https://img.freepik.com/free-photo/savannah-landscape-national-park-kenya-africa_167946-107.jpg",
-      rating: 4.6,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Nairobi.\nDay 4-6: Masai Mara.\nDay 7-9: Serengeti.\nDay 10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Jambo+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Tented camps and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Jambo+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: "Glimpse of South Africa with Kruger - Private Tour",
-      price: "4,050",
-      description: "A private safari experience with luxury accommodations.",
-      image: IMAGES.WesternCape || "https://via.placeholder.com/300x200?text=Kruger+Tour",
-      rating: 4.9,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-4: Cape Town.\nDay 5-10: Kruger private safari.\nDay 11-13: Stellenbosch.\nDay 14: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Kruger+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Private lodges and 5-star hotels.",
-          image: "https://via.placeholder.com/600x400?text=Kruger+Accommodation",
-        },
-      ],
-    },
-    {
-      id: 6,
-      title: "Splendid South Africa",
-      price: "2,560",
-      description: "Another splendid journey through South Africa’s highlights.",
-      image: IMAGES.MasaiMara || "https://via.placeholder.com/300x200?text=Splendid+South+Africa+2",
-      rating: 4.5,
-      sections: [
-        {
-          title: "Itinerary",
-          description:
-            "Day 1-3: Cape Town.\nDay 4-6: Garden Route.\nDay 7-8: Safari.\nDay 9-10: Depart.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+2+Itinerary",
-        },
-        {
-          title: "Accommodation",
-          description: "Comfortable hotels and lodges.",
-          image: "https://via.placeholder.com/600x400?text=Splendid+2+Accommodation",
-        },
-      ],
-    },
-  ];
+  // State for event data, loading, and error
+  const [event, setEvent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const event = events.find((e) => e.id === parseInt(id));
+  // Fetch event data from API
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  if (!event) {
-    return <div className="text-center p-10">Event not found</div>;
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sample-project-api.chordifyed.com/api/v1';
+        const apiUrl = `${baseUrl}/events/${id}`;
+        const response = await axios.get(apiUrl);
+
+        // Map API data to the expected structure
+        const eventData = {
+          id: response.data.id,
+          title: response.data.heading,
+          description: response.data.about,
+          image: response.data.bannerImages1 || 'https://via.placeholder.com/300x200?text=Event+Image',
+          // Placeholder for fields not in API
+          price: response.data.price || '3,360', // Replace with actual API field if available
+          rating: response.data.rating || 4.7,   // Replace with actual API field if available
+          // Mock sections since not in API; replace with actual API data if available
+          sections: response.data.sections || [
+            {
+              title: "Itinerary",
+              description: "Day 1: Arrive at destination.\nDay 2-5: Explore key attractions.\nDay 6: Depart.",
+              image: "https://via.placeholder.com/600x400?text=Itinerary",
+            },
+            {
+              title: "Accommodation",
+              description: "Comfortable hotels and lodges.",
+              // image: "https://via.placeholder.com/600x400?text=Accommodation",
+            },
+            {
+              title: "Activities",
+              description: "Sightseeing, cultural tours, and outdoor adventures.",
+              // image: "https://via.placeholder.com/600x400?text=Activities",
+            },
+            // {
+            //   title: "Inclusions",
+            //   description: "Included: Meals, guides, fees.\nNot Included: Flights, personal expenses.",
+            //   image: "https://via.placeholder.com/600x400?text=Inclusions",
+            // },
+          ],
+        };
+
+        setEvent(eventData);
+      } catch (err) {
+        console.error(`Error fetching event with id ${id}:`, err.message, err.response);
+        setError('Failed to load event details. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
+
+  // Render error state
+  if (error || !event) {
+    return (
+      <div className="text-center p-10 text-red-600">
+        {error || 'Event not found'}
+      </div>
+    );
   }
 
   return (
