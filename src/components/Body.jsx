@@ -585,6 +585,7 @@ const Body = () => {
                   ))}
             </div>
 
+
             <div
               className={clsx('bg-white p-4 sm:p-6 rounded-lg shadow-md w-full max-w-full lg:max-w-md min-h-[200px] sm:min-h-[300px]')}
             >
