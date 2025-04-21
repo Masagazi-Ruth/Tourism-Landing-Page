@@ -99,7 +99,7 @@ const Events = () => {
       {/* Hero Section */}
       <section className="bg-orange-500 py-16 text-white">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-2">Adventures & Expeditions</h1>
+          <h1 className="text-4xl font-bold mb-2">Events</h1>
           <p className="text-xl mb-8">
             Life is either a daring adventure or nothing.
           </p>
