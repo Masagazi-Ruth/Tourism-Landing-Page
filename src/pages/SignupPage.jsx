@@ -76,12 +76,12 @@ const SignUpPage = () => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
       try {
-        await register(formData.username, formData.email, formData.password);
+        register(formData.username, formData.email, formData.password);
         navigate('/login');
       } catch (err) {
         setErrors({ submit: err.message });

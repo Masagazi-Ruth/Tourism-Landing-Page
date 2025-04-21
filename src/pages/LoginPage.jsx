@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 import IMAGES from '../assets/images/image';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import Header from '../components/shared/Header'; 
+import Header from '../components/shared/Header';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -67,12 +67,12 @@ const LoginPage = () => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
       try {
-        await login(formData.username, formData.password);
+        login(formData.username, formData.password);
         navigate('/'); // Redirect to homepage after successful login
       } catch (err) {
         setErrors({ submit: err.message || 'Invalid username or password' });

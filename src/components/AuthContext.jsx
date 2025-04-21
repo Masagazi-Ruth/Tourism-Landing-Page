@@ -1,58 +1,76 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { MdEmail } from 'react-icons/md';
 
-// Create the Auth Context
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState([]); // In-memory user storage
   const [loading, setLoading] = useState(true);
 
+  // Initialize users from local storage on app load
+  const getUsersFromStorage = () => {
+    const storedUsers = localStorage.getItem('users');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  };
+
+  // Save users to local storage
+  const saveUsersToStorage = (users) => {
+    localStorage.setItem('users', JSON.stringify(users));
+  };
+
+  // Check for logged-in user on app load
   useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing logged-in user:', error);
+        localStorage.removeItem('loggedInUser');
+      }
+    }
     setLoading(false);
   }, []);
 
-  const login = async (username, password) => {
-    console.log('Login attempt:', username, password);
+  const register = (username, email, password) => {
+    const users = getUsersFromStorage();
+
+    // Check if user already exists
+    const userExists = users.some(
+      (u) => u.email === email || u.username === username
+    );
+    if (userExists) {
+      throw new Error('User with this email or username already exists');
+    }
+
+    // Add new user
+    const newUser = { username, email, password };
+    users.push(newUser);
+    saveUsersToStorage(users);
+  };
+
+  const login = (username, password) => {
+    const users = getUsersFromStorage();
+
+    // Find user by username and password
     const foundUser = users.find(
       (u) => u.username === username && u.password === password
     );
     if (!foundUser) {
       throw new Error('Invalid username or password');
     }
-    setUser(foundUser);
-  };
 
-  const register = async (username, email, password) => {
-    if (users.some((u) => u.username === username)) {
-      throw new Error('Username already exists');
-    }
-    const newUser = { username, email, password, name: username, role: 'user' };
-    setUsers([...users, newUser]);
-    return newUser;
+    // Set logged-in user
+    setUser(foundUser);
+    localStorage.setItem('loggedInUser', JSON.stringify(foundUser));
   };
 
   const logout = () => {
     setUser(null);
-  };
-
-  const updateUser = (updatedUserData) => {
-    // Update the current user
-    setUser((prev) => {
-      const updatedUser = { ...prev, ...updatedUserData };
-      // Update the users array to reflect the changes (e.g., username change)
-      setUsers((prevUsers) =>
-        prevUsers.map((u) =>
-          u.username === prev.username ? { ...u, ...updatedUserData } : u
-        )
-      );
-      return updatedUser;
-    });
+    localStorage.removeItem('loggedInUser');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUser }}>
+    <AuthContext.Provider value={{ user, register, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

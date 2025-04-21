@@ -103,13 +103,13 @@ const Events = () => {
           <p className="text-xl mb-8">
             Life is either a daring adventure or nothing.
           </p>
-          <div className="flex justify-end">
+          <div className="text-amber-800 flex justify-end">
             <input
               type="text"
               placeholder="Search Here"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="px-4 py-2 rounded-l-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 w-full max-w-xs"
+              className="px-4 py-2 rounded-l-md border border-gray-300 bg-white text-amber-800 focus:outline-none focus:ring-2 focus:ring-gray-400 w-full max-w-xs"
             />
             <button
               className="px-4 py-2 bg-gray-200 rounded-r-md hover:bg-gray-300 transition"
