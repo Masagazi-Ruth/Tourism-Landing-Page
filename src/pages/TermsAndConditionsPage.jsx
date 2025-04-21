@@ -96,7 +96,7 @@ const TermsAndConditions = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         {uiSections.map((section, index) => (
           <div key={index} className="mb-4">
-            <h2 className="text-xl font-semibold">{section.uiTitle}</h2>
+            <h2 className="text-xl font-semibold text-amber-800">{section.uiTitle}</h2>
             {section.content ? (
               <p className="text-gray-700 mt-2 whitespace-pre-line">{section.content}</p>
             ) : (

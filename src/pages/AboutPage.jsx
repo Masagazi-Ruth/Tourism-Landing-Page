@@ -117,7 +117,7 @@ const About = () => {
                 visibleSections.vision ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <h3 className="text-xl font-semibold">Vision</h3>
+              <h3 className="text-xl font-semibold text-amber-800">Vision</h3>
               <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.vision}</p>
             </div>
 
@@ -127,7 +127,7 @@ const About = () => {
                 visibleSections.mission ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <h3 className="text-xl font-semibold">Mission</h3>
+              <h3 className="text-xl font-semibold text-amber-800">Mission</h3>
               <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.mission}</p>
             </div>
 
@@ -137,7 +137,7 @@ const About = () => {
                 visibleSections.objectives ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <h3 className="text-xl font-semibold">Objectives</h3>
+              <h3 className="text-xl font-semibold text-amber-800">Objectives</h3>
               <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.objectives}</p>
             </div>
           </div>
