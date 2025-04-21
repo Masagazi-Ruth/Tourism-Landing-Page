@@ -8,12 +8,10 @@ const DetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // State for event data, loading, and error
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch event data from API
   useEffect(() => {
     const fetchEventData = async () => {
       setIsLoading(true);
@@ -28,32 +26,36 @@ const DetailPage = () => {
       }
 
       if (data) {
-        // Map API data to the expected structure
         const eventData = {
           id: data.id,
-          title: data.heading,
-          description: data.about,
+          title: data.heading || 'Untitled Event',
+          description: data.about || 'No description available.',
           image: data.bannerImages1 || 'https://via.placeholder.com/300x200?text=Event+Image',
-          // Fallback for fields not in API
           price: data.price || '3,360',
           rating: data.rating || 4.7,
-          sections: data.sections || [
+          dates: data.calendarDates || 'TBD',
+          duration: data.numberOfDays ? `${data.numberOfDays} Days` : 'TBD',
+          sections: [
             {
               title: "Itinerary",
-              description: "Day 1: Arrive at destination.\nDay 2-5: Explore key attractions.\nDay 6: Depart.",
-              image: "https://via.placeholder.com/600x400?text=Itinerary",
+              days: data.schedule
+                ? data.schedule.map(day => ({
+                    day: day.day,
+                    description: day.plan,
+                    image: day.bannerImage,
+                  }))
+                : [],
             },
             {
               title: "Accommodation",
-              description: "Comfortable hotels and lodges.",
+              description: data.accommodation || "Comfortable hotels and lodges.",
             },
             {
               title: "Activities",
-              description: "Sightseeing, cultural tours, and outdoor adventures.",
+              description: data.activities || "Sightseeing, cultural tours, and outdoor adventures.",
             },
           ],
         };
-
         setEvent(eventData);
       } else {
         setError('Invalid data format received from API');
@@ -65,7 +67,6 @@ const DetailPage = () => {
     fetchEventData();
   }, [id]);
 
-  // Render loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -74,7 +75,6 @@ const DetailPage = () => {
     );
   }
 
-  // Render error state
   if (error || !event) {
     return (
       <div className="text-center p-10 text-red-600">
@@ -112,7 +112,15 @@ const DetailPage = () => {
         <div className={clsx("max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8")}>
           <div className={clsx("md:w-2/3")}>
             <h2 className={clsx("text-3xl font-bold text-gray-800 mb-4")}>About</h2>
-            <p className={clsx("text-gray-600 mb-6")}>{event.description}</p>
+            <p className={clsx("text-gray-600 mb-4")}>{event.description}</p>
+            <div className={clsx("text-gray-600 space-y-2")}>
+              <p>
+                <span className="font-semibold">Dates:</span> {event.dates}
+              </p>
+              <p>
+                <span className="font-semibold">Duration:</span> {event.duration}
+              </p>
+            </div>
           </div>
           <div className={clsx("md:w-1/3 bg-white p-6 rounded-lg shadow-md")}>
             <h3 className={clsx("text-2xl font-bold text-gray-800 mb-2")}>
@@ -132,45 +140,55 @@ const DetailPage = () => {
       </section>
 
       {/* Additional Sections */}
-      {event.sections.map((section, index) => (
-        <section key={index} className={clsx("py-10", index % 2 === 0 ? "bg-white" : "bg-gray-50")}>
-          <div className={clsx("max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8")}>
-            {index % 2 === 0 ? (
-              <>
-                {section.image && (
-                  <div className={clsx("md:w-1/2")}>
-                    <img
-                      src={section.image}
-                      alt={section.title}
-                      className={clsx("w-full h-64 object-cover rounded-md")}
-                    />
-                  </div>
-                )}
-                <div className={clsx(section.image ? "md:w-1/2" : "md:w-full")}>
-                  <h2 className={clsx("text-2xl font-bold text-gray-800 mb-4")}>{section.title}</h2>
+      {event.sections.map((section, index) => {
+        const hasDays = section.days && section.days.length > 0;
+
+        return (
+          <section key={index} className={clsx("py-10", index % 2 === 0 ? "bg-white" : "bg-gray-50")}>
+            <div className={clsx("max-w-6xl mx-auto px-4")}>
+              <h2 className={clsx("text-2xl font-bold text-gray-800 mb-4")}>{section.title}</h2>
+              {hasDays ? (
+                <div className="space-y-6">
+                  {section.days.map(day => {
+                    const hasValidImage = day.image && !day.image.includes('via.placeholder.com');
+                    return (
+                      <div
+                        key={day.day}
+                        className={clsx("flex flex-col md:flex-row gap-6 p-6 rounded-lg", index % 2 === 0 ? "bg-gray-50" : "bg-white", "shadow-md")}
+                      >
+                        {hasValidImage && (
+                          <div className={clsx("md:w-1/3")}>
+                            <img
+                              src={day.image}
+                              alt={`Day ${day.day}`}
+                              className={clsx("w-full h-48 object-cover rounded-md")}
+                            />
+                          </div>
+                        )}
+                        <div className={clsx(hasValidImage ? "md:w-2/3" : "md:w-full")}>
+                          <h3 className={clsx("text-xl font-semibold text-gray-800 mb-2")}>
+                            Day {day.day}: {day.description}
+                          </h3>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div
+                  className={clsx(
+                    "p-6 rounded-lg",
+                    index % 2 === 0 ? "bg-gray-50" : "bg-white",
+                    "shadow-md"
+                  )}
+                >
                   <p className={clsx("text-gray-600 whitespace-pre-line")}>{section.description}</p>
                 </div>
-              </>
-            ) : (
-              <>
-                <div className={clsx("md:w-1/2")}>
-                  <h2 className={clsx("text-2xl font-bold text-gray-800 mb-4")}>{section.title}</h2>
-                  <p className={clsx("text-gray-600 whitespace-pre-line")}>{section.description}</p>
-                </div>
-                {section.image && (
-                  <div className={clsx("md:w-1/2")}>
-                    <img
-                      src={section.image}
-                      alt={section.title}
-                      className={clsx("w-full h-64 object-cover rounded-md")}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
-      ))}
+              )}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 };
