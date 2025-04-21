@@ -12,6 +12,7 @@ import DetailPage from './pages/DetailPage';
 import TermsAndConditions from './pages/TermsAndConditionsPage';
 import PrivacyPolicy from './pages/PrivacyPolicyPage';
 import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignupPage';
 import Header from './components/shared/Header';
 import Footer from './components/shared/Footer';
 import Profile from './pages/ProfilePage'; 
@@ -31,7 +32,7 @@ function App() {
               <Route path="/termsandconditions" element={<TermsAndConditions />} />
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/login" element={<LoginPage />} />
-
+              <Route path="/signup" element={<SignUpPage />} />
               {/* Protected Routes */}
               <Route path="/events" element={<ProtectedRoute element={<Events />} />}/>
               <Route path="/events/:id" element={<DetailPage />} />

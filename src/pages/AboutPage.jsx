@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { fetchAbout } from '../services/api';
 
 const About = () => {
   // State for tracking if sections are visible
@@ -21,41 +21,37 @@ const About = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch about us data
+  // Fetch about us data using api.js
   useEffect(() => {
     const fetchAboutData = async () => {
       setIsLoading(true);
       setError(null);
 
-      try {
-        // Use environment variable for API URL
-        const apiUrl = import.meta.env.VITE_API_URL || 'about-us'; // Fallback URL
-        const response = await axios.get(apiUrl);
+      const { data, error } = await fetchAbout();
 
-        if (response.data && response.data.content) {
-          // Parse the content to extract vision, mission, and objectives
-          const content = response.data.content;
-
-          // Extract sections using regex
-          const visionMatch = content.match(/Vision\s*\n\s*([\s\S]*?)(?=\n\s*Mission|\n\s*Objectives|$)/i);
-          const missionMatch = content.match(/Mission\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Objectives|$)/i);
-          const objectivesMatch = content.match(/Objectives\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Mission|$)/i);
-
-          setAboutData({
-            title: response.data.title || 'About Us',
-            vision: visionMatch ? visionMatch[1].trim() : '',
-            mission: missionMatch ? missionMatch[1].trim() : '',
-            objectives: objectivesMatch ? objectivesMatch[1].trim() : '',
-          });
-        } else {
-          throw new Error('Invalid data format received from API');
-        }
-      } catch (err) {
-        console.error('Error fetching about us data:', err);
+      if (error) {
+        console.error('Error fetching about us data:', error);
         setError('Failed to load about us information. Please try again later.');
-      } finally {
-        setIsLoading(false);
+      } else if (data && data.content) {
+        // Parse the content to extract vision, mission, and objectives
+        const content = data.content;
+
+        // Extract sections using regex
+        const visionMatch = content.match(/Vision\s*\n\s*([\s\S]*?)(?=\n\s*Mission|\n\s*Objectives|$)/i);
+        const missionMatch = content.match(/Mission\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Objectives|$)/i);
+        const objectivesMatch = content.match(/Objectives\s*\n\s*([\s\S]*?)(?=\n\s*Vision|\n\s*Mission|$)/i);
+
+        setAboutData({
+          title: data.title || 'About Us',
+          vision: visionMatch ? visionMatch[1].trim() : 'Our vision is to inspire and connect people with nature.',
+          mission: missionMatch ? missionMatch[1].trim() : 'Our mission is to provide unforgettable outdoor experiences.',
+          objectives: objectivesMatch ? objectivesMatch[1].trim() : 'Our objectives include promoting sustainable tourism and adventure.',
+        });
+      } else {
+        console.warn('Invalid data format received from API');
+        setError('Invalid data format received from API');
       }
+      setIsLoading(false);
     };
 
     fetchAboutData();
@@ -93,60 +89,61 @@ const About = () => {
   }, [visibleSections]);
 
   return (
-    <>
-      <div className="min-h-screen bg-gray-100">
-        {/* Hero Section - Updated color to match other pages */}
-        <section className="bg-orange-500 py-16 text-white">
-          <div className="container mx-auto">
-            <h2 className="text-3xl font-bold">{aboutData.title}</h2>
-            <p className="mt-2">Who we are & where we stand.</p>
-          </div>
-        </section>
+    <div className="min-h-screen bg-gray-100">
+      {/* Hero Section */}
+      <section className="bg-orange-500 py-16 text-white">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-bold">{aboutData.title}</h2>
+          <p className="mt-2">Who we are & where we stand.</p>
+        </div>
+      </section>
 
-        {isLoading ? (
-          // Loading state
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#DD501DE8]"></div>
-          </div>
-        ) : error ? (
-          // Error state
-          <div className="container mx-auto px-4 py-8">
-            <div className="bg-red-100 text-red-500 p-4 rounded-lg text-center">{error}</div>
-          </div>
-        ) : (
-          <>
-            <section className="container mx-auto px-4 py-8">
-              <div
-                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                  visibleSections.vision ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <h3 className="text-2xl font-bold mb-4">Vision</h3>
-                <p className="text-gray-600">{aboutData.vision}</p>
-              </div>
+      {isLoading ? (
+        // Loading state
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#DD501DE8]"></div>
+        </div>
+      ) : error ? (
+        // Error state
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-red-100 text-red-500 p-4 rounded-lg text-center">{error}</div>
+        </div>
+      ) : (
+        // <section className="container mx-auto px-4 py-8">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div
+              id="vision-section"
+              className={`mb-4 transition-opacity duration-1000 ${
+                visibleSections.vision ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <h3 className="text-xl font-semibold">Vision</h3>
+              <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.vision}</p>
+            </div>
 
-              <div
-                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                  visibleSections.mission ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <h3 className="text-2xl font-bold mb-4">Mission</h3>
-                <p className="text-gray-600">{aboutData.mission}</p>
-              </div>
+            <div
+              id="mission-section"
+              className={`mb-4 transition-opacity duration-1000 ${
+                visibleSections.mission ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <h3 className="text-xl font-semibold">Mission</h3>
+              <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.mission}</p>
+            </div>
 
-              <div
-                className={`bg-white shadow-md rounded-lg p-6 transition-opacity duration-1000 ${
-                  visibleSections.objectives ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <h3 className="text-2xl font-bold mb-4">Objectives</h3>
-                <p className="text-gray-600">{aboutData.objectives}</p>
-              </div>
-            </section>
-          </>
-        )}
-      </div>
-    </>
+            <div
+              id="objectives-section"
+              className={`mb-4 transition-opacity duration-1000 ${
+                visibleSections.objectives ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <h3 className="text-xl font-semibold">Objectives</h3>
+              <p className="text-gray-600 mt-2 whitespace-pre-line">{aboutData.objectives}</p>
+            </div>
+          </div>
+        // </section>
+      )}
+    </div>
   );
 };
 

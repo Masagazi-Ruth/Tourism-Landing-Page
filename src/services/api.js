@@ -31,6 +31,7 @@ export const fetchPrivacyPolicy = async () => {
 export const fetchEvents = async (category = 'all') => {
   const endpoints = {
     all: 'all-events',
+    highlighted: 'highlighted-events',
     SnowTreks: 'snow-treks-events',
     SummerEvents: 'summer-events',
     MonsoonEvents: 'monsoon-events',
@@ -43,6 +44,15 @@ export const fetchEvents = async (category = 'all') => {
     return { data: response.data, error: null };
   } catch (error) {
     return handleApiError(error, `/events/${endpoint}`);
+  }
+};
+
+export const fetchEventById = async (id) => {
+  try {
+    const response = await api.get(`/events/${id}`);
+    return { data: response.data, error: null };
+  } catch (error) {
+    return handleApiError(error, `/events/${id}`);
   }
 };
 
@@ -66,19 +76,19 @@ export const fetchTeam = async () => {
 
 export const fetchTermsAndConditions = async () => {
   try {
-    const response = await api.get('/info/terms-conditions');
+    const response = await api.get('/info/terms-condition');
     return { data: response.data, error: null };
   } catch (error) {
-    return handleApiError(error, '/info/terms-conditions');
+    return handleApiError(error, '/info/terms-condition');
   }
 };
 
 export const fetchContact = async () => {
   try {
-    const response = await api.get('/info/contact-us');
+    const response = await api.get('/contact');
     return { data: response.data, error: null };
   } catch (error) {
-    return handleApiError(error, '/info/contact-us');
+    return handleApiError(error, '/contact');
   }
 };
 

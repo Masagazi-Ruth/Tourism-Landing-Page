@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { fetchEvents } from '../services/api';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -9,83 +9,59 @@ const Events = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Map of category names to their API endpoints
-  const categoryEndpoints = {
-    all: 'all-events',
-    SnowTreks: 'snow-treks-events',
-    SummerEvents: 'summer-events',
-    MonsoonEvents: 'monsoon-events',
-    EpicAdventures: 'epic-adventure-events',
-    SpecialEvents: 'special-events',
-  };
+  const handleEventsFetch = useCallback(async (category = 'all') => {
+    setIsLoading(true);
+    setError(null);
 
-  const fetchEvents = useCallback(async (category = 'all') => {
-    try {
-      setIsLoading(true);
-      setError(null);
+    const { data, error } = await fetchEvents(category);
 
-      // Get the appropriate endpoint for the selected category
-      const endpoint = categoryEndpoints[category] || 'all-events';
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sample-project-api.chordifyed.com/api/v1';
-      const apiUrl = `${baseUrl}/events/${endpoint}`;
-
-      console.log(`Fetching from: ${apiUrl}`);
-      const response = await axios.get(apiUrl);
-      console.log('API Response:', response.data);
-
-      // Handle different response structures based on category
-      if (category === 'all' && response.data && typeof response.data === 'object') {
-        // For 'all-events', we get an object with category arrays
-        const categories = Object.keys(response.data);
-
-        // Flatten all event arrays from different categories
-        const allEvents = categories.reduce((acc, cat) => {
-          const eventsWithCategory = response.data[cat].map(event => ({
-            ...event,
-            category: cat,
-          }));
-          return [...acc, ...eventsWithCategory];
-        }, []);
-
-        setEvents(allEvents);
-      } else if (Array.isArray(response.data)) {
-        // For category-specific endpoints, we get an array directly
-        const eventsWithCategory = response.data.map(event => ({
-          ...event,
-          category,
-        }));
-        setEvents(eventsWithCategory);
-      } else if (response.data && response.data[category] && Array.isArray(response.data[category])) {
-        // Some APIs might return an object with a single category key
-        const eventsWithCategory = response.data[category].map(event => ({
-          ...event,
-          category,
-        }));
-        setEvents(eventsWithCategory);
-      } else {
-        setEvents([]);
-      }
-    } catch (err) {
-      console.error(`Error fetching ${category} events:`, err.message, err.response);
-      setError(`Failed to load ${category} events. Please try again later.`);
-    } finally {
+    if (error) {
+      setError(error);
+      setEvents([]);
       setIsLoading(false);
+      return;
     }
+
+    // Handle different response structures based on category
+    if (category === 'all' && data && typeof data === 'object') {
+      const categories = Object.keys(data);
+      const allEvents = categories.reduce((acc, cat) => {
+        const eventsWithCategory = data[cat].map(event => ({
+          ...event,
+          category: cat,
+        }));
+        return [...acc, ...eventsWithCategory];
+      }, []);
+      setEvents(allEvents);
+    } else if (Array.isArray(data)) {
+      const eventsWithCategory = data.map(event => ({
+        ...event,
+        category,
+      }));
+      setEvents(eventsWithCategory);
+    } else if (data && data[category] && Array.isArray(data[category])) {
+      const eventsWithCategory = data[category].map(event => ({
+        ...event,
+        category,
+      }));
+      setEvents(eventsWithCategory);
+    } else {
+      setEvents([]);
+    }
+
+    setIsLoading(false);
   }, []);
 
-  // Initial data load
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    handleEventsFetch();
+  }, [handleEventsFetch]);
 
-  // Fetch new data when category changes
   useEffect(() => {
     if (selectedCategory) {
-      fetchEvents(selectedCategory);
+      handleEventsFetch(selectedCategory);
     }
-  }, [selectedCategory, fetchEvents]);
+  }, [selectedCategory, handleEventsFetch]);
 
-  // Title-based filtering within the current category
   const filteredEvents = events.filter((event) =>
     event?.heading?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -109,12 +85,10 @@ const Events = () => {
     window.location.href = `/events/${eventId}`;
   };
 
-  // Helper function to format category names for display
   const formatCategoryName = (category) => {
     return category.replace(/([A-Z])/g, ' $1').trim();
   };
 
-  // Helper function to truncate text
   const truncateText = (text, maxLength) => {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
@@ -169,7 +143,7 @@ const Events = () => {
           >
             All Adventures
           </button>
-          {Object.keys(categoryEndpoints).filter(cat => cat !== 'all').map(category => (
+          {['SnowTreks', 'SummerEvents', 'MonsoonEvents', 'EpicAdventures', 'SpecialEvents'].map(category => (
             <button
               key={category}
               className={`px-4 py-1 rounded-full text-sm font-medium ${selectedCategory === category ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
@@ -190,7 +164,7 @@ const Events = () => {
         <div className="text-center py-10 text-red-600">
           <p>{error}</p>
           <button
-            onClick={() => fetchEvents(selectedCategory)}
+            onClick={() => handleEventsFetch(selectedCategory)}
             className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
           >
             Retry
@@ -232,7 +206,6 @@ const Events = () => {
                           </div>
                         </div>
                         
-                        {/* Image indicators */}
                         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
                           {event?.bannerImages1 && (
                             <span className="w-2 h-2 rounded-full bg-white" />
@@ -293,7 +266,6 @@ const Events = () => {
             </div>
           </section>
 
-          {/* Load More Button */}
           {visibleEvents < filteredEvents.length && (
             <div className="py-6 text-center">
               <button

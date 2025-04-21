@@ -6,6 +6,7 @@ import HeroSection from './HeroSection';
 import SectionContainer from './SectionContainer';
 import TripCard from './TripCard';
 import VideoCard from './VideoCard';
+import TestimonialCard from './TestimonialCard'
 import '../App.css';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import IMAGES from '../assets/images/image';
@@ -519,32 +520,31 @@ const Body = () => {
 
       {/* Why People Love Invincible */}
       <section
-        className={clsx('why-people-love-section', 'p-10 bg-gray-50 rounded-xl shadow-lg mt-10')}
+        className={clsx('why-people-love-section', 'p-6 sm:p-10 bg-white rounded-xl shadow-lg mt-8 sm:mt-10')}
       >
-        <div className={clsx('mb-8 text-left')}>
-          <h1 className={clsx('text-3xl font-bold mb-2 text-gray-800')}>
+        <div className={clsx('mb-6 sm:mb-8 text-left')}>
+          <h1 className={clsx('text-2xl sm:text-3xl font-bold mb-2 text-brown-800')}>
             Why people 💖 Invincible
           </h1>
-          <h2 className={clsx('text-xl font-normal text-gray-600')}>
+          <h2 className={clsx('text-lg sm:text-xl font-normal text-brown-600')}>
             Experience the best with us
           </h2>
         </div>
 
-        <div className={clsx('flex flex-col md:flex-row gap-8 items-start')}>
+        <div className={clsx('flex flex-col lg:flex-row gap-6 sm:gap-8 items-start')}>
           {/* Profile Image Section */}
           <div
-            className={clsx('bg-[#f1e9e9] p-6 rounded-lg shadow-md')}
-            style={{ width: '600px', height: '500px' }}
+            className={clsx(' bg-[#E6DADA] p-4 sm:p-6 rounded-lg shadow-md w-full lg:w-1/2 max-w-full lg:max-w-md')}
           >
             {loading.testimonials ? (
-              <div className="space-y-8 h-full flex flex-col justify-center">
+              <div className="space-y-6 sm:space-y-8 h-full flex flex-col justify-center">
                 {Array(3)
                   .fill()
                   .map((_, i) => (
                     <div key={i} className="flex items-center animate-pulse">
-                      <div className="w-16 h-16 rounded-full bg-gray-200 mr-4" />
+                      <div className="w-12 sm:w-16 h-12 sm:h-16 rounded-full bg-gray-200 mr-4" />
                       <div>
-                        <div className="h-6 w-32 bg-gray-200 rounded mb-1" />
+                        <div className="h-5 sm:h-6 w-32 bg-gray-200 rounded mb-1" />
                         <div className="h-4 w-24 bg-gray-200 rounded" />
                       </div>
                     </div>
@@ -556,83 +556,56 @@ const Body = () => {
                 onRetry={fetchTestimonials}
               />
             ) : Object.keys(testimonials).length > 0 ? (
-              <div className={clsx('space-y-8 h-full flex flex-col justify-center bg-[#f1e9e9]')}>
+              <div className={clsx('space-y-6 sm:space-y-8 h-full flex flex-col justify-center')}>
                 {Object.keys(testimonials).map((key) => (
-                  <div
+                  <TestimonialCard
                     key={key}
-                    className={clsx('flex items-center cursor-pointer')}
-                    onClick={() => setSelectedPerson(key)}
-                  >
-                    <div
-                      className={clsx(
-                        'w-16 h-16 rounded-full bg-gray-200 mr-4 overflow-hidden border-2 border-transparent',
-                        'hover:border-pink-400 transition'
-                      )}
-                    >
-                      <img
-                        src={testimonials[key].image}
-                        alt={testimonials[key].name}
-                        className={clsx('w-full h-full object-cover')}
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/150?text=Profile';
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <h3
-                        className={clsx(
-                          'font-bold text-left text-gray-800 text-xl',
-                          selectedPerson === key && 'text-blue-500'
-                        )}
-                      >
-                        {testimonials[key].name}
-                      </h3>
-                      <p className={clsx('text-md text-gray-500')}>
-                        {testimonials[key].role}
-                      </p>
-                    </div>
-                  </div>
+                    name={testimonials[key].name}
+                    role={testimonials[key].role}
+                    image={testimonials[key].image}
+                    isSelected={selectedPerson === key}
+                    onSelect={() => setSelectedPerson(key)}
+                  />
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-600">No testimonials available.</p>
+              <p className="text-center text-brown-600">No testimonials available.</p>
             )}
           </div>
 
           {/* Testimonial Display Section */}
-          <div className={clsx('flex flex-col')}>
-            <div className={clsx('flex mb-4 ml-2')}>
+          <div className={clsx('flex flex-col w-full lg:w-1/2')}>
+            <div className={clsx('flex mb-3 sm:mb-4 ml-2')}>
               {selectedPerson && testimonials[selectedPerson]
                 ? renderStars(testimonials[selectedPerson].ratings)
                 : Array(5)
                   .fill()
                   .map((_, i) => (
-                    <FaStar key={i} className={clsx('text-3xl text-yellow-400')} />
+                    <FaStar key={i} className={clsx('text-2xl sm:text-3xl text-orange-500')} />
                   ))}
             </div>
 
             <div
-              className={clsx('bg-white p-6 rounded-7px shadow-md')}
-              style={{ width: '550px', height: '400px' }}
+              className={clsx('bg-white p-4 sm:p-6 rounded-lg shadow-md w-full max-w-full lg:max-w-md min-h-[200px] sm:min-h-[300px]')}
             >
               {loading.testimonials ? (
                 <div className="h-full flex items-center animate-pulse">
                   <div className="w-full h-20 bg-gray-200 rounded" />
                 </div>
               ) : errors.testimonials ? (
-                <p className="text-gray-700 text-left leading-relaxed text-lg">
+                <p className="text-brown-700 text-left leading-relaxed text-base sm:text-lg">
                   Unable to load testimonial.
                 </p>
               ) : selectedPerson && testimonials[selectedPerson] ? (
                 <p
                   className={clsx(
-                    'text-gray-700 text-left leading-relaxed text-lg h-full flex items-center'
+                    'text-brown-700 text-left leading-relaxed text-base sm:text-lg h-full flex items-center'
                   )}
                 >
                   {testimonials[selectedPerson].message}
                 </p>
               ) : (
-                <p className="text-gray-700 text-left leading-relaxed text-lg">
+                <p className="text-brown-700 text-left leading-relaxed text-base sm:text-lg">
                   Select a person to view their testimonial.
                 </p>
               )}

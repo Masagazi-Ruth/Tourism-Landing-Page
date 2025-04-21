@@ -4,68 +4,55 @@ import { MdEmail } from 'react-icons/md';
 // Create the Auth Context
 export const AuthContext = createContext();
 
-// Hardcoded user
-const hardcodedUser = {
-  username: 'masagazi',
-  password: 'Masagazi@123',
-  name: 'Masagazi Ruth',
-  email: 'masagaziruth@gmail.com',
-  role: 'admin',
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [users, setUsers] = useState([]); // In-memory user storage
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token === 'fake-token') {
-      setUser({
-        username: hardcodedUser.username,
-        name: hardcodedUser.name,
-        email: hardcodedUser.email,
-        role: hardcodedUser.role,
-      });
-    }
     setLoading(false);
-  }, [token]);
+  }, []);
 
   const login = async (username, password) => {
     console.log('Login attempt:', username, password);
-    if (
-      username === hardcodedUser.username &&
-      password === hardcodedUser.password
-    ) {
-      const fakeToken = 'fake-token';
-      setToken(fakeToken);
-      localStorage.setItem('token', fakeToken);
-      setUser({
-        username: hardcodedUser.username,
-        name: hardcodedUser.name,
-        email: hardcodedUser.email,
-        role: hardcodedUser.role,
-      });
-    } else {
+    const foundUser = users.find(
+      (u) => u.username === username && u.password === password
+    );
+    if (!foundUser) {
       throw new Error('Invalid username or password');
     }
+    setUser(foundUser);
+  };
+
+  const register = async (username, email, password) => {
+    if (users.some((u) => u.username === username)) {
+      throw new Error('Username already exists');
+    }
+    const newUser = { username, email, password, name: username, role: 'user' };
+    setUsers([...users, newUser]);
+    return newUser;
   };
 
   const logout = () => {
     setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
   };
 
-  // Add the updateUser function
   const updateUser = (updatedUserData) => {
-    setUser(prev => ({
-      ...prev,
-      ...updatedUserData
-    }));
+    // Update the current user
+    setUser((prev) => {
+      const updatedUser = { ...prev, ...updatedUserData };
+      // Update the users array to reflect the changes (e.g., username change)
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u.username === prev.username ? { ...u, ...updatedUserData } : u
+        )
+      );
+      return updatedUser;
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading, updateUser }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

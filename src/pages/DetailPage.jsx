@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
-import axios from 'axios';
 import { FaStar } from 'react-icons/fa';
-import IMAGES from '../assets/images/image';
+import { fetchEventById } from '../services/api';
 
 const DetailPage = () => {
   const { id } = useParams();
@@ -16,26 +15,29 @@ const DetailPage = () => {
 
   // Fetch event data from API
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+    const fetchEventData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sample-project-api.chordifyed.com/api/v1';
-        const apiUrl = `${baseUrl}/events/${id}`;
-        const response = await axios.get(apiUrl);
+      const { data, error } = await fetchEventById(id);
 
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+        return;
+      }
+
+      if (data) {
         // Map API data to the expected structure
         const eventData = {
-          id: response.data.id,
-          title: response.data.heading,
-          description: response.data.about,
-          image: response.data.bannerImages1 || 'https://via.placeholder.com/300x200?text=Event+Image',
-          // Placeholder for fields not in API
-          price: response.data.price || '3,360', // Replace with actual API field if available
-          rating: response.data.rating || 4.7,   // Replace with actual API field if available
-          // Mock sections since not in API; replace with actual API data if available
-          sections: response.data.sections || [
+          id: data.id,
+          title: data.heading,
+          description: data.about,
+          image: data.bannerImages1 || 'https://via.placeholder.com/300x200?text=Event+Image',
+          // Fallback for fields not in API
+          price: data.price || '3,360',
+          rating: data.rating || 4.7,
+          sections: data.sections || [
             {
               title: "Itinerary",
               description: "Day 1: Arrive at destination.\nDay 2-5: Explore key attractions.\nDay 6: Depart.",
@@ -44,31 +46,23 @@ const DetailPage = () => {
             {
               title: "Accommodation",
               description: "Comfortable hotels and lodges.",
-              // image: "https://via.placeholder.com/600x400?text=Accommodation",
             },
             {
               title: "Activities",
               description: "Sightseeing, cultural tours, and outdoor adventures.",
-              // image: "https://via.placeholder.com/600x400?text=Activities",
             },
-            // {
-            //   title: "Inclusions",
-            //   description: "Included: Meals, guides, fees.\nNot Included: Flights, personal expenses.",
-            //   image: "https://via.placeholder.com/600x400?text=Inclusions",
-            // },
           ],
         };
 
         setEvent(eventData);
-      } catch (err) {
-        console.error(`Error fetching event with id ${id}:`, err.message, err.response);
-        setError('Failed to load event details. Please try again later.');
-      } finally {
-        setIsLoading(false);
+      } else {
+        setError('Invalid data format received from API');
       }
+
+      setIsLoading(false);
     };
 
-    fetchEvent();
+    fetchEventData();
   }, [id]);
 
   // Render loading state
@@ -143,14 +137,16 @@ const DetailPage = () => {
           <div className={clsx("max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8")}>
             {index % 2 === 0 ? (
               <>
-                <div className={clsx("md:w-1/2")}>
-                  <img
-                    src={section.image}
-                    alt={section.title}
-                    className={clsx("w-full h-64 object-cover rounded-md")}
-                  />
-                </div>
-                <div className={clsx("md:w-1/2")}>
+                {section.image && (
+                  <div className={clsx("md:w-1/2")}>
+                    <img
+                      src={section.image}
+                      alt={section.title}
+                      className={clsx("w-full h-64 object-cover rounded-md")}
+                    />
+                  </div>
+                )}
+                <div className={clsx(section.image ? "md:w-1/2" : "md:w-full")}>
                   <h2 className={clsx("text-2xl font-bold text-gray-800 mb-4")}>{section.title}</h2>
                   <p className={clsx("text-gray-600 whitespace-pre-line")}>{section.description}</p>
                 </div>
@@ -161,13 +157,15 @@ const DetailPage = () => {
                   <h2 className={clsx("text-2xl font-bold text-gray-800 mb-4")}>{section.title}</h2>
                   <p className={clsx("text-gray-600 whitespace-pre-line")}>{section.description}</p>
                 </div>
-                <div className={clsx("md:w-1/2")}>
-                  <img
-                    src={section.image}
-                    alt={section.title}
-                    className={clsx("w-full h-64 object-cover rounded-md")}
-                  />
-                </div>
+                {section.image && (
+                  <div className={clsx("md:w-1/2")}>
+                    <img
+                      src={section.image}
+                      alt={section.title}
+                      className={clsx("w-full h-64 object-cover rounded-md")}
+                    />
+                  </div>
+                )}
               </>
             )}
           </div>

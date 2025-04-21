@@ -1,25 +1,22 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 import IMAGES from '../assets/images/image';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import Header from '../components/shared/Header'; 
+import Header from '../components/shared/Header';
 
-const LoginPage = () => {
+const SignUpPage = () => {
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: '',
+    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const { login, user } = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      navigate('/'); // Redirect to homepage if user is already logged in
-    }
-  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,6 +43,12 @@ const LoginPage = () => {
       tempErrors.username = 'Username can only contain letters, numbers, and underscores';
     }
 
+    if (!formData.email) {
+      tempErrors.email = 'Email is required';
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      tempErrors.email = 'Invalid email address';
+    }
+
     if (!formData.password) {
       tempErrors.password = 'Password is required';
     } else {
@@ -63,6 +66,12 @@ const LoginPage = () => {
       }
     }
 
+    if (!formData.confirmPassword) {
+      tempErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      tempErrors.confirmPassword = 'Passwords do not match';
+    }
+
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -72,16 +81,20 @@ const LoginPage = () => {
 
     if (validateForm()) {
       try {
-        await login(formData.username, formData.password);
-        navigate('/'); // Redirect to homepage after successful login
+        await register(formData.username, formData.email, formData.password);
+        navigate('/login');
       } catch (err) {
-        setErrors({ submit: err.message || 'Invalid username or password' });
+        setErrors({ submit: err.message });
       }
     }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -100,9 +113,9 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold mb-6 text-center text-brown-800">Welcome Back</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center text-brown-800">Create an Account</h2>
           {errors.submit && <p className="text-orange-500 text-center mb-4">{errors.submit}</p>}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-6">
             <div>
               <label className="block text-left text-sm font-medium text-brown-700 mb-2">Username</label>
               <div className="relative">
@@ -124,6 +137,26 @@ const LoginPage = () => {
               {errors.username && <span className="text-orange-500 text-sm">{errors.username}</span>}
             </div>
             <div>
+              <label className="block text-left text-sm font-medium text-brown-700 mb-2">Email</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-white"
+                  autoComplete="email"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h2m8 0a4 4 0 01-8 0m8 0h2m-10 0H6"></path>
+                  </svg>
+                </span>
+              </div>
+              {errors.email && <span className="text-orange-500 text-sm">{errors.email}</span>}
+            </div>
+            <div>
               <label className="block text-left text-sm font-medium text-brown-700 mb-2">Password</label>
               <div className="relative">
                 <input
@@ -133,7 +166,7 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full p-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-white"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
                 <span
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400 cursor-pointer hover:text-orange-500"
@@ -144,17 +177,38 @@ const LoginPage = () => {
               </div>
               {errors.password && <span className="text-orange-500 text-sm">{errors.password}</span>}
             </div>
+            <div>
+              <label className="block text-left text-sm font-medium text-brown-700 mb-2">Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-white"
+                  autoComplete="new-password"
+                />
+                <span
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400 cursor-pointer hover:text-orange-500"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {showConfirmPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                </span>
+              </div>
+              {errors.confirmPassword && <span className="text-orange-500 text-sm">{errors.confirmPassword}</span>}
+            </div>
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="w-full bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
             >
-              Login
-            </button>
-          </form>
-          <p className="text-center text-brown-600 mt-4">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-orange-500 hover:text-orange-600 font-medium">
               Sign Up
+            </button>
+          </div>
+          <p className="text-center text-brown-600 mt-4">
+            Already have an account?{' '}
+            <Link to="/login" className="text-orange-500 hover:text-orange-600 font-medium">
+              Login
             </Link>
           </p>
         </div>
@@ -163,4 +217,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;
