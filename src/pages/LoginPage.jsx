@@ -88,14 +88,14 @@ const LoginPage = () => {
     <>
       <Header />
       <div
-        className="min-h-screen flex items-center justify-center bg-cover bg-center relative pt-16"
+        className="min-h-screen-70 min-w-screen-80 flex items-center justify-center bg-cover bg-center relative pt-24"
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(245, 166, 35, 0.3)), url(${IMAGES.Heros})`,
         }}
       >
         <div className="max-w-md w-full mx-4 p-8 bg-white rounded-xl shadow-xl transform transition-all duration-500 hover:scale-105">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center border-2 border-orange-500">
+            <div className="w-16 h-14 bg-orange-100 rounded-full flex items-center justify-center border-2 border-orange-500">
               <span className="text-2xl font-bold text-orange-700">HS</span>
             </div>
           </div>

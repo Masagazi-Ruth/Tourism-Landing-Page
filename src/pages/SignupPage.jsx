@@ -101,7 +101,7 @@ const SignUpPage = () => {
     <>
       <Header />
       <div
-        className="min-h-screen flex items-center justify-center bg-cover bg-center relative pt-16"
+        className="min-h-screen flex items-center justify-center bg-cover bg-center relative pt-20"
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(245, 166, 35, 0.3)), url(${IMAGES.Heros})`,
         }}
@@ -137,6 +137,26 @@ const SignUpPage = () => {
               {errors.username && <span className="text-orange-500 text-sm">{errors.username}</span>}
             </div>
             <div>
+              <label className="block text-left text-sm font-medium text-brown-700 mb-2">Full Name</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter your fullname"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-white"
+                  autoComplete="name"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                </span>
+              </div>
+              {errors.name && <span className="text-orange-500 text-sm">{errors.name}</span>}
+            </div>
+            <div>
               <label className="block text-left text-sm font-medium text-brown-700 mb-2">Email</label>
               <div className="relative">
                 <input
@@ -155,6 +175,26 @@ const SignUpPage = () => {
                 </span>
               </div>
               {errors.email && <span className="text-orange-500 text-sm">{errors.email}</span>}
+            </div>
+            <div>
+              <label className="block text-left text-sm font-medium text-brown-700 mb-2">Phone Number</label>
+              <div className="relative">
+                <input
+                  type="phone"
+                  name="phone"
+                  placeholder="Enter your phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300 bg-white"
+                  autoComplete="contact"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2h2m8 0a4 4 0 01-8 0m8 0h2m-10 0H6"></path>
+                  </svg>
+                </span>
+              </div>
+              {errors.phone && <span className="text-orange-500 text-sm">{errors.phone}</span>}
             </div>
             <div>
               <label className="block text-left text-sm font-medium text-brown-700 mb-2">Password</label>

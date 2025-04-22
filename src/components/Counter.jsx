@@ -5,7 +5,7 @@ const Counter = ({ endValue, duration = 2000 }) => {
 
   useEffect(() => {
     let start = 0;
-    const increment = endValue / (duration / 50); // Increment per 50ms
+    const increment = endValue / (duration / 10); // Increment per 50ms
     const timer = setInterval(() => {
       start += increment;
       if (start >= endValue) {

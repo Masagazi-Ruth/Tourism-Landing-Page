@@ -6,6 +6,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss(),],
   envPrefix: ['VITE_', 'REACT_APP_'],
-  envDir: '.', // Support both prefixes
+  envDir: '.', 
 })
 

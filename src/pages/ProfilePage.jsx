@@ -311,7 +311,7 @@ const Profile = () => {
                         <div className="bg-orange-50 p-4 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300">
                           <p className="text-sm text-brown-500">Member Since</p>
                           <p className="text-lg font-medium text-brown-800">
-                            {user.joinDate || 'January 1, 2023'}
+                            {user.joinDate }
                           </p>
                         </div>
                       </div>
