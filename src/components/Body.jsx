@@ -20,7 +20,7 @@ const Body = () => {
   const heroData = {
     title: "Experience Nature",
     subtitle: "India's Largest Trekking Organization",
-    backgroundImage: IMAGES.HEROS || IMAGES.Heros,
+    backgroundImage: IMAGES.Heros || 'https://via.placeholder.com/1200x600?text=Hero+Image',
   };
 
   // State for event categories
