@@ -76,19 +76,23 @@ const Teams = () => {
                   {teamMembers.map((member, index) => (
                     <div
                       key={member.id || index}
-                      className="bg-white rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow duration-300"
+                      className="bg-white rounded-lg shadow-md text-center hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out overflow-hidden"
                     >
-                      <img
-                        src={member.profileImage || `https://source.unsplash.com/200x200/?person,${index}`}
-                        alt={member.name}
-                        className="w-32 h-32 mx-auto object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=random`;
-                        }}
-                      />
-                      <h3 className="text-xl font-semibold mt-4">{member.name}</h3>
-                      <p className="text-gray-600">{member.designation}</p>
+                      <div className="overflow-hidden">
+                        <img
+                          src={member.profileImage || `https://source.unsplash.com/200x300/?person,${index}`}
+                          alt={member.name}
+                          className="w-full h-64 object-cover hover:brightness-110 transition-all duration-300"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=random`;
+                          }}
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-xl font-semibold text-gray-800">{member.name}</h3>
+                        <p className="text-gray-600 mt-1">{member.designation}</p>
+                      </div>
                     </div>
                   ))}
                 </div>

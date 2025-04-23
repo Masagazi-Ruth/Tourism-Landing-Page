@@ -1,18 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { FaStar } from 'react-icons/fa';
 import { fetchEventById } from '../services/api';
+import { AuthContext } from '../components/AuthContext';
 
 const DetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated, loading: authLoading } = useContext(AuthContext);
 
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate('/login', { replace: true });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return; // Don't fetch data if not authenticated
+
     const fetchEventData = async () => {
       setIsLoading(true);
       setError(null);
@@ -65,9 +76,9 @@ const DetailPage = () => {
     };
 
     fetchEventData();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>

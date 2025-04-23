@@ -1,21 +1,21 @@
-/* SectionContainer.css */
+/* 
 .section-container {
   padding: 48px 16px;
 }
 
 .section-container-bg {
-  background-color: #f3f4f6; /* Equivalent to bg-gray-100 */
+  background-color: #f3f4f6;
 }
 
 .section-title {
   font-size: 1.875rem;
   font-weight: bold;
-  color: #1f2937; /* Equivalent to text-gray-800 */
+  color: #1f2937; 
   margin-bottom: 8px;
 }
 
 .section-subtitle {
-  color: #4b5563; /* Equivalent to text-gray-600 */
+  color: #4b5563; 
   margin-bottom: 32px;
 }
 
@@ -42,4 +42,4 @@
   .section-grid-2 {
     grid-template-columns: 1fr;
   }
-}
+} */

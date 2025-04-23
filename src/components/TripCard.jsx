@@ -21,7 +21,7 @@ const TripCard = ({
         <div
           className={clsx(
             "absolute inset-0 bg-cover bg-center transition-transform duration-500",
-            "group-hover:scale-105" // 5% zoom on hover, matching VideoCard
+            "group-hover:scale-105" 
           )}
           style={{ backgroundImage: `url(${image})` }}
           onError={(e) => {

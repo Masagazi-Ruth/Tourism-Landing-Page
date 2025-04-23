@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,19 +6,21 @@ import HeroSection from './HeroSection';
 import SectionContainer from './SectionContainer';
 import TripCard from './TripCard';
 import VideoCard from './VideoCard';
-import TestimonialCard from './TestimonialCard'
+import TestimonialCard from './TestimonialCard';
 import '../App.css';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import IMAGES from '../assets/images/image';
+import { AuthContext } from '../components/AuthContext'; // Import AuthContext
 
 const Body = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext); // Access authentication status
 
   // Hero data (static) with fallback
   const heroData = {
     title: "Experience Nature",
     subtitle: "India's Largest Trekking Organization",
-    backgroundImage: IMAGES.Heros || 'https://via.placeholder.com/1200x600?text=Hero+Image',
+    backgroundImage: IMAGES.HEROS || IMAGES.Heros,
   };
 
   // State for event categories
@@ -146,7 +148,6 @@ const Body = () => {
       }, {});
 
       setTestimonials(testimonialObj);
-      // Set the first person as selected
       const firstKey = Object.keys(testimonialObj)[0];
       if (firstKey) setSelectedPerson(firstKey);
     } catch (err) {
@@ -242,6 +243,15 @@ const Body = () => {
     </div>
   );
 
+  // Handle TripCard click with authentication check
+  const handleTripCardClick = (eventId) => {
+    if (isAuthenticated) {
+      navigate(`/events/${eventId}`); // Navigate to DetailPage if logged in
+    } else {
+      navigate('/login'); // Redirect to login if not authenticated
+    }
+  };
+
   // useEffect for logging state changes
   useEffect(() => {
     console.log(`Selected person changed to: ${selectedPerson}`);
@@ -316,7 +326,7 @@ const Body = () => {
               title={event.title}
               badges={event.badges}
               variant="default"
-              onClick={() => navigate(`/events/${event.id}`)}
+              onClick={() => handleTripCardClick(event.id)} // Use the new handler
             />
           ))
         ) : (
@@ -351,7 +361,7 @@ const Body = () => {
               title={trek.title}
               badges={trek.badges}
               variant="default"
-              onClick={() => navigate(`/events/${trek.id}`)}
+              onClick={() => handleTripCardClick(trek.id)} // Use the new handler
             />
           ))
         ) : (
@@ -385,7 +395,7 @@ const Body = () => {
               title={event.title}
               badges={event.badges}
               variant="default"
-              onClick={() => navigate(`/events/${event.id}`)}
+              onClick={() => handleTripCardClick(event.id)} // Use the new handler
             />
           ))
         ) : (
@@ -420,7 +430,7 @@ const Body = () => {
               title={event.title}
               badges={event.badges}
               variant="default"
-              onClick={() => navigate(`/events/${event.id}`)}
+              onClick={() => handleTripCardClick(event.id)} // Use the new handler
             />
           ))
         ) : (
@@ -455,7 +465,7 @@ const Body = () => {
               title={adventure.title}
               badges={adventure.badges}
               variant="large"
-              onClick={() => navigate(`/events/${adventure.id}`)}
+              onClick={() => handleTripCardClick(adventure.id)} // Use the new handler
             />
           ))
         ) : (
@@ -489,7 +499,7 @@ const Body = () => {
               title={event.title}
               badges={event.badges}
               variant="default"
-              onClick={() => navigate(`/events/${event.id}`)}
+              onClick={() => handleTripCardClick(event.id)} // Use the new handler
             />
           ))
         ) : (
@@ -584,7 +594,6 @@ const Body = () => {
                     <FaStar key={i} className={clsx('text-2xl sm:text-3xl text-orange-500')} />
                   ))}
             </div>
-
 
             <div
               className={clsx('bg-white p-4 sm:p-6 rounded-lg shadow-md w-full max-w-full lg:max-w-md min-h-[200px] sm:min-h-[300px]')}

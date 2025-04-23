@@ -69,12 +69,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('loggedInUser');
   };
 
+  // Derive isAuthenticated from user state
+  const isAuthenticated = !!user;
+
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, register, login, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 export default AuthContext;
